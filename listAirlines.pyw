@@ -126,11 +126,11 @@ def new():
     tk.Label(newAirWindow, text='Airline URL: ').grid(row=1, column=0)
     tk.Label(newAirWindow, text='Username: ').grid(row=2, column=0)
     tk.Label(newAirWindow, text='API Key (Only if you want use autofill): ').grid(row=3, column=0)
-    tk.Entry(newAirWindow, textvariable=name).grid(row=0, column=1)
-    tk.Entry(newAirWindow, textvariable=url).grid(row=1, column=1)
-    tk.Entry(newAirWindow, textvariable=username).grid(row=2, column=1)
-    tk.Entry(newAirWindow, textvariable=apiKey).grid(row=3, column=1)
-    tk.Button(newAirWindow, text='Create', command=terminateNewAirline).grid(row=4, columnspan=2, sticky='we')
+    ttk.Entry(newAirWindow, textvariable=name).grid(row=0, column=1)
+    ttk.Entry(newAirWindow, textvariable=url).grid(row=1, column=1)
+    ttk.Entry(newAirWindow, textvariable=username).grid(row=2, column=1)
+    ttk.Entry(newAirWindow, textvariable=apiKey).grid(row=3, column=1)
+    ttk.Button(newAirWindow, text='Create', command=terminateNewAirline).grid(row=4, columnspan=2, sticky='we')
     newAirWindow.mainloop()
     newAirWindow.destroy()
 
@@ -184,17 +184,17 @@ def edit():
 
     editAirWindow.title('xACARS ' + configLib.version)
     tk.Label(editAirWindow, text='Airline to edit: ').grid(row=0, column=0)
-    tk.OptionMenu(editAirWindow, airline, *List).grid(row=0, column=1)
+    ttk.OptionMenu(editAirWindow, airline, *List).grid(row=0, column=1)
     tk.Label(editAirWindow, text='Airline Name: ').grid(row=1, column=0)
     tk.Label(editAirWindow, text='Airline URL: ').grid(row=2, column=0)
     tk.Label(editAirWindow, text='Username: ').grid(row=3, column=0)
     tk.Label(editAirWindow, text='API Key (Only if you want use autofill): ').grid(row=4, column=0)
-    tk.Entry(editAirWindow, textvariable=name, text=name).grid(row=1, column=1)
-    tk.Entry(editAirWindow, textvariable=url, text=url).grid(row=2, column=1)
-    tk.Entry(editAirWindow, textvariable=username, text=username).grid(row=3, column=1)
-    tk.Entry(editAirWindow, textvariable=apiKey, text=apiKey).grid(row=4, column=1)
-    tk.Button(editAirWindow, text='Update', command=terminateEditAirline).grid(row=5, column=0, sticky='we')
-    tk.Button(editAirWindow, text='Autofill', command=editAutofill).grid(row=5, column=1, sticky='we')
+    ttk.Entry(editAirWindow, textvariable=name, text=name).grid(row=1, column=1)
+    ttk.Entry(editAirWindow, textvariable=url, text=url).grid(row=2, column=1)
+    ttk.Entry(editAirWindow, textvariable=username, text=username).grid(row=3, column=1)
+    ttk.Entry(editAirWindow, textvariable=apiKey, text=apiKey).grid(row=4, column=1)
+    ttk.Button(editAirWindow, text='Update', command=terminateEditAirline).grid(row=5, column=0, sticky='we')
+    ttk.Button(editAirWindow, text='Autofill', command=editAutofill).grid(row=5, column=1, sticky='we')
     editAirWindow.mainloop()
     editAirWindow.destroy()
 
@@ -234,18 +234,21 @@ def reload():
     tk.Label(window, text='APIKey (optional)').grid(row=0, column=3)
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
 
-    a = 0
+    a = 1
     for key in list:
-        name = list[a]
-        tk.Label(window, text=name).grid(row=a+3, column=0)
-        tk.Label(window, text=websites[a]).grid(row=a+3, column=1)
-        tk.Label(window, text=usernames[a]).grid(row=a+3, column=2)
-        tk.Label(window, text=savedAPIKeys[a]).grid(row=a+3, column=3)
-        a = a + 1
+        try:
+            name = list[a]
+            tk.Label(window, text=name).grid(row=a+3, column=0)
+            tk.Label(window, text=websites[a]).grid(row=a+3, column=1)
+            tk.Label(window, text=usernames[a]).grid(row=a+3, column=2)
+            tk.Label(window, text=savedAPIKeys[a]).grid(row=a+3, column=3)
+            a = a + 1
+        except:
+            pass
 
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=a+3, columnspan=4, sticky="we")
-    tk.Button(window, text='Finish', command=quit).grid(row=a+4, column=0, sticky="we")
-    tk.Button(window, text='Add New', command=new).grid(row=a+4, column=1, sticky="we")
-    tk.Button(window, text='Edit Airline', command=edit).grid(row=a+4, column=2, sticky="we")
-    tk.Button(window, text='Delete Airline', command=delete).grid(row=a+4, column=3, sticky="we")
+    ttk.Button(window, text='Finish', command=quit).grid(row=a+4, column=0, sticky="we")
+    ttk.Button(window, text='Add New', command=new).grid(row=a+4, column=1, sticky="we")
+    ttk.Button(window, text='Edit Airline', command=edit).grid(row=a+4, column=2, sticky="we")
+    ttk.Button(window, text='Delete Airline', command=delete).grid(row=a+4, column=3, sticky="we")
     window.mainloop()

@@ -8,6 +8,7 @@
 
 # Import libarys
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 import config
 import web
@@ -44,14 +45,14 @@ def login():
 
         window.title('xACARS ' + config.version)
         tk.Label(window, text='Airline: ').grid(row=0, column=0)
-        tk.OptionMenu(window, airline, *List).grid(row=0, column=1)
+        ttk.OptionMenu(window, airline, *List).grid(row=0, column=1)
         tk.Label(window, text='Username: ').grid(row=1, column=0)
-        tk.Entry(window, textvariable=username).grid(row=1, column=1)
+        ttk.Entry(window, textvariable=username).grid(row=1, column=1)
         tk.Label(window, text='API Key: ').grid(row=2, column=0)
-        tk.Entry(window, textvariable=key, text=key).grid(row=2, column=1)
-        tk.Button(window, text="Autofill", command=autofill).grid(row=2, column=2)
-        tk.Button(window, text="Autofill", command=autofillUsername).grid(row=1, column=2)
-        tk.Button(window, text='Log In', command=terminate).grid(row=3, columnspan=3, sticky="we")
+        ttk.Entry(window, textvariable=key, text=key).grid(row=2, column=1)
+        ttk.Button(window, text="Autofill", command=autofill).grid(row=2, column=2)
+        ttk.Button(window, text="Autofill", command=autofillUsername).grid(row=1, column=2)
+        ttk.Button(window, text='Log In', command=terminate).grid(row=3, columnspan=3, sticky="we")
         window.mainloop()
         window.destroy()
     except Exception:

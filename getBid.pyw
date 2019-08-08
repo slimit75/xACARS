@@ -36,14 +36,15 @@ def draw():
         tk.Label(window, text="No bids! Place a bid on the airline website and restart xACARS!").grid(row=1, column=0)
     else:
         bids = json.loads(data)["data"]
+        bidList.append(str(bids[0]["flight"]["ident"]) + " (" + str(bids[0]["flight"]["dpt_airport_id"]) + " - " + str(bids[0]["flight"]["arr_airport_id"]) + ")")
         for key in bids:
             bidList.append(str(key["flight"]["ident"]) + " (" + str(key["flight"]["dpt_airport_id"]) + " - " + str(key["flight"]["arr_airport_id"]) + ")")
 
         bidList.reverse()
     
         selBid.set(bidList[0])
-        tk.OptionMenu(window, selBid, *bidList).grid(row=2, column=0, sticky="we")
-        tk.Button(window, text='Select', command=window.quit).grid(row=2, column=1, sticky="we")
+        ttk.OptionMenu(window, selBid, *bidList).grid(row=2, column=0, sticky="we")
+        ttk.Button(window, text='Select', command=window.quit).grid(row=2, column=1, sticky="we")
 
     window.mainloop()
     window.destroy()

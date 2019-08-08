@@ -72,6 +72,10 @@ def reloadList():
     config = configparser.ConfigParser()
     config.read("airlines.ini")
     configSections = config.sections()
+    list.append(config["1"]['name'])
+    websites.append(config["1"]['URL'])
+    savedAPIKeys.append(config["1"]['apikey'])
+    usernames.append(config["1"]['username'])
     for key in configSections:
         list.append(config[key]['name'])
         websites.append(config[key]['URL'])

@@ -42,7 +42,7 @@ def about():
     ttk.Separator(aboutWindow, orient=tk.HORIZONTAL).grid(row=2, column=0, sticky="we")
     tk.Label(aboutWindow, text="This program is currently a beta, so you should expect broken things.").grid(row=3, column=0, sticky="w")
     tk.Label(aboutWindow, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.").grid(row=4, column=0, sticky="w")
-    tk.Button(aboutWindow, text='Close', command=aboutWindow.quit).grid(row=5, column=0, sticky="we")
+    ttk.Button(aboutWindow, text='Close', command=aboutWindow.quit).grid(row=5, column=0, sticky="we")
     aboutWindow.mainloop()
     aboutWindow.destroy()
 
@@ -103,16 +103,16 @@ def preFile():
     ttk.Separator(preFileWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
     #tk.Label(preFileWindow, text="This screen does nothing- yet").grid(row=1, column=0)
     tk.Label(preFileWindow, text="Cruise FL: ").grid(row=2, column=0)
-    tk.Entry(preFileWindow, textvariable=cruiseAlt).grid(row=2, column=1, sticky="we")
+    ttk.Entry(preFileWindow, textvariable=cruiseAlt).grid(row=2, column=1, sticky="we")
     tk.Label(preFileWindow, text="Planned Time: ").grid(row=3, column=0)
-    tk.Entry(preFileWindow, textvariable=plannedFlightTime).grid(row=3, column=1, sticky="we")
+    ttk.Entry(preFileWindow, textvariable=plannedFlightTime).grid(row=3, column=1, sticky="we")
     tk.Label(preFileWindow, text="minutes").grid(row=3, column=2, sticky="w")
     tk.Label(preFileWindow, text="Planned Distance: ").grid(row=4, column=0)
-    tk.Entry(preFileWindow, textvariable=plannedDistance).grid(row=4, column=1, sticky="we")
+    ttk.Entry(preFileWindow, textvariable=plannedDistance).grid(row=4, column=1, sticky="we")
     tk.Label(preFileWindow, text="nm").grid(row=4, column=2, sticky="w")
     tk.Label(preFileWindow, text="Route:").grid(row=5, column=0)
-    tk.Entry(preFileWindow, textvariable=route).grid(row=5, column=1, sticky="we")
-    tk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=6, columnspan=4, sticky="we")
+    ttk.Entry(preFileWindow, textvariable=route).grid(row=5, column=1, sticky="we")
+    ttk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=6, columnspan=4, sticky="we")
     preFileWindow.mainloop()
     preFileWindow.destroy()
 
@@ -137,32 +137,63 @@ def updateEnrouteTime():
     uetWindow = tk.Tk()
     newEnrouteTime = tk.StringVar(uetWindow)
     uetWindow.iconbitmap('Favicon.ico')
-    window.title('xACARS - Enroute Time')
+    uetWindow.title('xACARS - Enroute Time')
     tk.Label(uetWindow, text='Enroute Time', font="Arial").grid(row=0, columnspan=1, sticky="w") 
     ttk.Separator(uetWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
-    tk.Entry(uetWindow, textvariable=newEnrouteTime).grid(row=2, column=0, sticky="we")
+    ttk.Entry(uetWindow, textvariable=newEnrouteTime).grid(row=2, column=0, sticky="we")
     tk.Label(uetWindow, text='minutes').grid(row=2, column=1, sticky="w")
-    tk.Button(uetWindow, text='Save & Exit', command=uetWindow.quit).grid(row=3, columnspan=2, sticky="we")
+    ttk.Button(uetWindow, text='Save & Exit', command=uetWindow.quit).grid(row=3, columnspan=2, sticky="we")
     uetWindow.mainloop()
 
     # Update enroute time
 
     uetWindow.destroy()
+    
+def filePirep():
+    fpWindow = tk.Tk()
+    addComment = tk.IntVar(fpWindow)
+    comment = tk.StringVar(fpWindow)
+
+    fpWindow.iconbitmap('Favicon.ico')
+    fpWindow.title('xACARS - File Pirep')
+    tk.Label(fpWindow, text='File Pirep', font="Arial").grid(sticky="w") 
+    ttk.Separator(fpWindow, orient=tk.HORIZONTAL).grid(row=1, sticky="we")
+    ttk.Checkbutton(fpWindow, text="Add comment?", variable=addComment).grid(row=2, sticky="w")
+    ttk.Entry(fpWindow, textvariable=comment, width=50).grid(row=3, sticky="nwwe")
+    ttk.Button(fpWindow, text='Save & Exit', command=fpWindow.quit).grid(row=4, sticky="we")
+    fpWindow.mainloop()
+
+    addComment = addComment.get()
+    
+    if addComment == 1:
+        pass
+    else:
+        pass
+
+    f.config(state="disabled")
+    Log('#######################################################')
+    Log("Hope you had a great flight!")
+    fpWindow.destroy()
+
+def finishFlight():
+    f.config(state="normal")
+    d.config(state="disabled")
+    e.config(state="disabled")
 
 # Draw window
 window.title('xACARS ' + config.version)
 tk.Label(window, text="Welcome to xACARS", font="Arial").grid(row=0, column=0)
-a = tk.Button(window, text='Select Bid', command=setupFlight, state="disabled")
+a = ttk.Button(window, text='Select Bid', command=setupFlight, state="disabled")
 a.grid(row=1, column=0, sticky='wens')
-b = tk.Button(window, text='Pre-File', command=preFile, state="disabled")
+b = ttk.Button(window, text='Pre-File', command=preFile, state="disabled")
 b.grid(row=2, column=0, sticky='wens')
-c = tk.Button(window, text='Start Flight', command=startFlight, state="disabled")
+c = ttk.Button(window, text='Start Flight', command=startFlight, state="disabled")
 c.grid(row=3, column=0, sticky='wens')
-d = tk.Button(window, text='Update Enroute Time', command=updateEnrouteTime, state="disabled")
+d = ttk.Button(window, text='Update Enroute Time', command=updateEnrouteTime, state="disabled")
 d.grid(row=4, column=0, sticky='wens')
-e = tk.Button(window, text='Finish Flight', state="disabled")
+e = ttk.Button(window, text='Finish Flight', command=finishFlight, state="disabled")
 e.grid(row=5, column=0, sticky='wens')
-f = tk.Button(window, text='File PIREP', state="disabled")
+f = ttk.Button(window, text='File PIREP', command=filePirep, state="disabled")
 f.grid(row=6, column=0, sticky='wens')
 
 menu = tk.Menu(window) 

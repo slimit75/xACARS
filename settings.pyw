@@ -15,7 +15,7 @@ import config
 import os
 
 # Set Variables
-listOfBool = ["True", "False"]
+listOfBool = ["", "True", "False"]
 restoreToDefault = False
 
 # Define functions
@@ -63,27 +63,27 @@ def drawWindow(x):
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
 
     tk.Label(window, text='Use FSUIPC/XPUIPC: ').grid(row=3, column=0, sticky="e")
-    tk.OptionMenu(window, fsuipc, *listOfBool).grid(row=3, column=1, sticky="we")
+    ttk.OptionMenu(window, fsuipc, *listOfBool).grid(row=3, column=1, sticky="we")
     tk.Label(window, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
 
     tk.Label(window, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
-    tk.OptionMenu(window, darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
+    ttk.OptionMenu(window, darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
     tk.Label(window, text='This will enable dark mode, in the future.').grid(row=4, column=3, sticky="w")
 
     tk.Label(window, text='Check for updates on startup: ').grid(row=5, column=0, sticky="e")
-    tk.OptionMenu(window, checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
+    ttk.OptionMenu(window, checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
     tk.Label(window, text='Turn this off if you want to manually check for updates.').grid(row=5, column=3, sticky="w")
 
     tk.Label(window, text='Download pre-release versions: ').grid(row=6, column=0, sticky="e")
-    tk.OptionMenu(window, getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
+    ttk.OptionMenu(window, getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
     tk.Label(window, text='This may be unstable.').grid(row=6, column=3, sticky="w")
 
     tk.Label(window, text='Startup Login Message: ').grid(row=7, column=0, sticky="e")
-    tk.OptionMenu(window, startupMessage, *listOfBool).grid(row=7, column=1, sticky="we")
+    ttk.OptionMenu(window, startupMessage, *listOfBool).grid(row=7, column=1, sticky="we")
     tk.Label(window, text='Disables the startup message that tells you how to login.').grid(row=7, column=3, sticky="w")
 
-    tk.Button(window, text='Restore to defaults', command=restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
-    tk.Button(window, text='Save & Exit', command=window.quit).grid(row=9, columnspan=4, sticky="we")
+    ttk.Button(window, text='Restore to defaults', command=restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
+    ttk.Button(window, text='Save & Exit', command=window.quit).grid(row=9, columnspan=4, sticky="we")
     window.mainloop()
 
     # Post exit script - saves file
