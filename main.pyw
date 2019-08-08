@@ -118,12 +118,20 @@ def preFile():
 
     b.config(state="disabled")
     c.config(state="normal")
+    d.config(state="normal")
 
 def openWiki():
     webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
 
 def updateCheck():
     messagebox.showinfo("xACARS","This feature doesnt exist.. yet.")
+
+def startFlight():
+    posUpdateLoop.startLoop()
+    Log('#######################################################')
+    Log("Now logging flight.")
+    c.config(state="disabled")
+    e.config(state="normal")
 
 # Draw window
 window.title('xACARS ' + config.version)
@@ -132,7 +140,7 @@ a = tk.Button(window, text='Select Bid', command=setupFlight, state="disabled")
 a.grid(row=1, column=0, sticky='wens')
 b = tk.Button(window, text='Pre-File', command=preFile, state="disabled")
 b.grid(row=2, column=0, sticky='wens')
-c = tk.Button(window, text='Start Flight', state="disabled")
+c = tk.Button(window, text='Start Flight', command=startFlight, state="disabled")
 c.grid(row=3, column=0, sticky='wens')
 d = tk.Button(window, text='Update Enroute Time', state="disabled")
 d.grid(row=4, column=0, sticky='wens')
@@ -175,6 +183,5 @@ helpMenu.add_command(label='About xACARS', command=about)
 helpMenu.add_command(label='Simulator Connection Test', command=connectionTest)
 helpMenu.add_command(label='Wiki', command=openWiki)
 
-posUpdateLoop.startLoop()
 window.mainloop()
 posUpdateLoop.stopLoop()
