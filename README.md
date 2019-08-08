@@ -5,13 +5,9 @@ ACARS system for phpVMS, powered by Python®.
 
 **There is a critical X-Plane only bug where only ground speed and vertical speed are being loaded by the XPUIPC bridge.**
 
-## What does it require?
-It requires:
-- Python 3.7.4 32bit
-- FSUIPC SDK for Python 3.7
-
-- FSX, P3D, or X-Plane
-- FSUIPC or XPUIPC
+## What are the requirements?
+- FSX  & FSUIPC (Free) or P3D & FSUIPC (Free)
+- X-Plane & XPUIPC
 
 ## Todo
 Moved to [this GitHub project](https://github.com/slimit75/xACARS/projects/1)
@@ -20,7 +16,6 @@ Moved to [this GitHub project](https://github.com/slimit75/xACARS/projects/1)
 Here is a list of what they do:
 
 ```
-about.pyw - Runs the "about" window
 config.py - Handles reading the .ini files, and creates them if they do not exist
 getBid.pyw - Gets a bid from the user
 listAirlines.pyw - Lists airlines, and manages the creation and editing of them

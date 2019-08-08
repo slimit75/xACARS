@@ -34,7 +34,17 @@ airline = tk.StringVar()
 
 # Define functions
 def about():
-    import about
+    aboutWindow = tk.Tk()
+    aboutWindow.iconbitmap('Favicon.ico')
+    aboutWindow.title('xACARS - About')
+    tk.Label(aboutWindow, text="xACARS " + config.version, font="Arial").grid(row=0, column=0)
+    tk.Label(aboutWindow, text="xACARS was developed by Speed_Limit75.").grid(row=1, column=0)
+    ttk.Separator(aboutWindow, orient=tk.HORIZONTAL).grid(row=2, column=0, sticky="we")
+    tk.Label(aboutWindow, text="This program is currently a beta, so you should expect broken things.").grid(row=3, column=0, sticky="w")
+    tk.Label(aboutWindow, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.").grid(row=4, column=0, sticky="w")
+    tk.Button(aboutWindow, text='Close', command=aboutWindow.quit).grid(row=5, column=0, sticky="we")
+    aboutWindow.mainloop()
+    aboutWindow.destroy()
 
 def Log(text):
     log.insert(tk.END, text) 
