@@ -31,7 +31,6 @@ def draw():
     tk.Label(window, text='Bids', font="Arial").grid(row=0, columnspan=1, sticky="w") 
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
     data = web.get(config.website + '/api/user/bids')
-
     ## Check for and list bids
     if data == '{"data":[]}':
         tk.Label(window, text="No bids! Place a bid on the airline website and restart xACARS!").grid(row=1, column=0)

@@ -10,6 +10,7 @@
 # Import libarys
 import tkinter as tk # Runs displays
 from tkinter import ttk # Adds seperator in some windows
+from tkinter import messagebox # Drives OS error, warning, or info message
 
 # Import local files
 import config
@@ -19,7 +20,8 @@ import track
 import posUpdateLoop
 import listAirlines 
 import settings as settingsWindow 
-import getBid 
+import getBid
+import webbrowser
 
 # Tells track.pyw to begin updating the input folder
 if config.useFSUIPC == True:
@@ -107,6 +109,12 @@ def preFile():
     b.config(state="disabled")
     c.config(state="normal")
 
+def openWiki():
+    webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
+
+def updateCheck():
+    messagebox.showinfo("xACARS","This feature doesnt exist.. yet.")
+
 # Draw window
 window.title('xACARS ' + config.version)
 tk.Label(window, text="Welcome to xACARS", font="Arial").grid(row=0, column=0)
@@ -142,8 +150,8 @@ if config.loginMessage == True:
 mainMenu = tk.Menu(menu, tearoff=False)
 menu.add_cascade(label='Main', menu=mainMenu) 
 mainMenu.add_command(label='Preferences', command=settings)
-mainMenu.add_command(label='Check for updates')
-mainMenu.add_separator() 
+mainMenu.add_command(label='Check for updates', command=updateCheck)
+mainMenu.add_separator()
 mainMenu.add_command(label='Exit', command=window.destroy) 
 
 vaMenu = tk.Menu(menu, tearoff=False)
@@ -155,7 +163,7 @@ helpMenu = tk.Menu(menu, tearoff=False)
 menu.add_cascade(label='Help', menu=helpMenu) 
 helpMenu.add_command(label='About xACARS', command=about)
 helpMenu.add_command(label='Simulator Connection Test', command=connectionTest)
-helpMenu.add_command(label='Wiki')
+helpMenu.add_command(label='Wiki', command=openWiki)
 
 posUpdateLoop.startLoop()
 window.mainloop()
