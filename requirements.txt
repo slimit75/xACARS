@@ -1,2 +1,3 @@
 requests==2.22.0
 pyuipc==0.4
+PyInstaller==3.5
