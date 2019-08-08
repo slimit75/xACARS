@@ -1,4 +1,6 @@
 # xACARS
+**This is still in active development, and doesnt work yet!!!**
+
 ACARS system for phpVMS.
 
 **There is a critical X-Plane only bug where only ground speed and vertical speed are being loaded by the XPUIPC bridge.**
@@ -58,14 +60,13 @@ Here is a list of what they do:
 
 ```
 about.pyw - Runs the "about" window
-airlines.ini - Database of airlines
-config.py - Handles reading the .ini files
-enroute - Data for in-flight. 
-getBid.pyw - Gets a bid
+config.py - Handles reading the .ini files, and creates them if they do not exist
+getBid.pyw - Gets a bid from the user
 listAirlines.pyw - Lists airlines, and manages the creation and editing of them
 login.pyw - Runs the login window
 main.pyw - Runs the main window
-setupFlight.pyw - Flight configuration menu, for prefiling.
+posUpdateLoop.pyw - Bugs the program to refresh data in the input folder for fresh data from FSUIPC/XPUIPC
+setupFlight.pyw - No longer used.
 track.pyw - Tracks the flight and updates its position.
 web.py - Interfaces between the web and the program. Basically the requests module, except sends the headers without an extra field.
 ```
