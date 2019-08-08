@@ -1,0 +1,4 @@
+run.bat
+__pycache__/*
+.vscode/*
+*.ini
