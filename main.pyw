@@ -133,6 +133,22 @@ def startFlight():
     c.config(state="disabled")
     e.config(state="normal")
 
+def updateEnrouteTime():
+    uetWindow = tk.Tk()
+    newEnrouteTime = tk.StringVar(uetWindow)
+    uetWindow.iconbitmap('Favicon.ico')
+    window.title('xACARS - Enroute Time')
+    tk.Label(uetWindow, text='Enroute Time', font="Arial").grid(row=0, columnspan=1, sticky="w") 
+    ttk.Separator(uetWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
+    tk.Entry(uetWindow, textvariable=newEnrouteTime).grid(row=2, column=0, sticky="we")
+    tk.Label(uetWindow, text='minutes').grid(row=2, column=1, sticky="w")
+    tk.Button(uetWindow, text='Save & Exit', command=uetWindow.quit).grid(row=3, columnspan=2, sticky="we")
+    uetWindow.mainloop()
+
+    # Update enroute time
+
+    uetWindow.destroy()
+
 # Draw window
 window.title('xACARS ' + config.version)
 tk.Label(window, text="Welcome to xACARS", font="Arial").grid(row=0, column=0)
@@ -142,7 +158,7 @@ b = tk.Button(window, text='Pre-File', command=preFile, state="disabled")
 b.grid(row=2, column=0, sticky='wens')
 c = tk.Button(window, text='Start Flight', command=startFlight, state="disabled")
 c.grid(row=3, column=0, sticky='wens')
-d = tk.Button(window, text='Update Enroute Time', state="disabled")
+d = tk.Button(window, text='Update Enroute Time', command=updateEnrouteTime, state="disabled")
 d.grid(row=4, column=0, sticky='wens')
 e = tk.Button(window, text='Finish Flight', state="disabled")
 e.grid(row=5, column=0, sticky='wens')
