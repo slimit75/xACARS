@@ -11,6 +11,7 @@
 import tkinter as tk # Runs displays
 from tkinter import ttk # Adds seperator in some windows
 from tkinter import messagebox # Drives OS error, warning, or info message
+import json # Manages json conversions
 
 # Import local files
 import config
@@ -76,6 +77,7 @@ def editAirlines():
 def setupFlight():
     global a
     global b
+    global data
 
     data = getBid.draw()
     Log('#######################################################')
@@ -90,6 +92,8 @@ def settings():
     return
 
 def preFile():
+    global data
+    global pirepID
     preFileWindow = tk.Tk()
 
     cruiseAlt = tk.StringVar(preFileWindow)
@@ -101,7 +105,6 @@ def preFile():
     preFileWindow.title('xACARS - Prefile')
     tk.Label(preFileWindow, text="Prefile", font="Arial").grid(row=0, column=0, columnspan=3, sticky="w")
     ttk.Separator(preFileWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
-    #tk.Label(preFileWindow, text="This screen does nothing- yet").grid(row=1, column=0)
     tk.Label(preFileWindow, text="Cruise FL: ").grid(row=2, column=0)
     ttk.Entry(preFileWindow, textvariable=cruiseAlt).grid(row=2, column=1, sticky="we")
     tk.Label(preFileWindow, text="Planned Time: ").grid(row=3, column=0)
@@ -115,10 +118,29 @@ def preFile():
     ttk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=6, columnspan=4, sticky="we")
     preFileWindow.mainloop()
     preFileWindow.destroy()
-
     b.config(state="disabled")
     c.config(state="normal")
     d.config(state="normal")
+
+    data = {
+    "airline_id": str(data["flight"]["airline_id"]),
+    "aircraft_id": "2",
+    "flight_number": str(data["flight"]["flight_number"]),
+    "route_code": str(data["flight"]["route_code"]),
+    "route_leg": str(data["flight"]["route_leg"]),
+    "dpt_airport_id": str(data["flight"]["dpt_airport_id"]),
+    "arr_airport_id": str(data["flight"]["arr_airport_id"]),
+    "level": str(cruiseAlt.get()),
+    "planned_distance": str(plannedDistance.get()),
+    "planned_flight_time": str(plannedFlightTime.get()),
+    "route": str(route.get()),
+    "source_name": "ACARS",
+    "flight_type": str(data["flight"]["flight_type"])
+}   
+    data = json.dumps(data)
+    data = web.post(config.website + '/api/pireps/prefile', data)
+    data = json.loads(data.text)["data"]
+    pirepID = data["id"]
 
 def openWiki():
     webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
@@ -127,7 +149,8 @@ def updateCheck():
     messagebox.showinfo("xACARS","This feature doesnt exist.. yet.")
 
 def startFlight():
-    posUpdateLoop.startLoop()
+    global pirepID
+    posUpdateLoop.startLoop(pirepID)
     Log('#######################################################')
     Log("Now logging flight.")
     c.config(state="disabled")
@@ -150,6 +173,7 @@ def updateEnrouteTime():
     uetWindow.destroy()
     
 def filePirep():
+    global pirepID
     fpWindow = tk.Tk()
     addComment = tk.IntVar(fpWindow)
     comment = tk.StringVar(fpWindow)
@@ -166,16 +190,35 @@ def filePirep():
     addComment = addComment.get()
     
     if addComment == 1:
-        pass
+        data = {
+    "flight_time": 0,
+    "fuel_used": 0,
+    "distance": 0
+}       
+        data = json.dumps(data)
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
+        print(data.text)
     else:
-        pass
+        data = {
+    "flight_time": 0,
+    "fuel_used": 0,
+    "distance": 0
+}       
+        data = json.dumps(data)
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
+        print(data.text)
 
     f.config(state="disabled")
     Log('#######################################################')
     Log("Hope you had a great flight!")
+    Log("Remember to submit your PIREP. You can do this by going to")
+    Log("the live map, click on your flight, click on the flignt")
+    Log("number, and click the green 'Submit' button in the upper")
+    Log("right hand corner.")
     fpWindow.destroy()
 
 def finishFlight():
+    posUpdateLoop.stopLoop()
     f.config(state="normal")
     d.config(state="disabled")
     e.config(state="disabled")
@@ -231,4 +274,3 @@ helpMenu.add_command(label='Simulator Connection Test', command=connectionTest)
 helpMenu.add_command(label='Wiki', command=openWiki)
 
 window.mainloop()
-posUpdateLoop.stopLoop()

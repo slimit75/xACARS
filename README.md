@@ -1,5 +1,5 @@
 # xACARS
-**This is still in active development, and doesnt work yet!!!**
+**This is still in early development, expect issues!**
 
 ACARS system for phpVMS, powered by Python®.
 
