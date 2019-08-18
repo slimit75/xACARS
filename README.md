@@ -6,8 +6,7 @@ ACARS system for phpVMS, powered by Python®.
 **There is a critical X-Plane only bug where only ground speed and vertical speed are being loaded by the XPUIPC bridge.**
 
 ## What are the requirements?
-- FSX  & FSUIPC (Free) or P3D & FSUIPC (Free)
-- X-Plane & XPUIPC
+Moved to [the wiki](https://github.com/slimit75/xACARS/wiki)
 
 ## Todo
 Moved to [this GitHub project](https://github.com/slimit75/xACARS/projects/1)
