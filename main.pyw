@@ -222,10 +222,6 @@ def filePirep():
     f.config(state="disabled")
     Log('#######################################################')
     Log("Hope you had a great flight!")
-    Log("Remember to submit your PIREP. You can do this by going to")
-    Log("the live map, click on your flight, click on the flignt")
-    Log("number, and click the green 'Submit' button in the upper")
-    Log("right hand corner.")
     fpWindow.destroy()
 
 def finishFlight():
