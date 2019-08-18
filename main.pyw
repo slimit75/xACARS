@@ -94,6 +94,7 @@ def settings():
 def preFile():
     global data
     global pirepID
+    global Log
     preFileWindow = tk.Tk()
 
     cruiseAlt = tk.StringVar(preFileWindow)
@@ -118,9 +119,6 @@ def preFile():
     ttk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=6, columnspan=4, sticky="we")
     preFileWindow.mainloop()
     preFileWindow.destroy()
-    b.config(state="disabled")
-    c.config(state="normal")
-    d.config(state="normal")
 
     data = {
     "airline_id": str(data["flight"]["airline_id"]),
@@ -139,8 +137,17 @@ def preFile():
 }   
     data = json.dumps(data)
     data = web.post(config.website + '/api/pireps/prefile', data)
-    data = json.loads(data.text)["data"]
-    pirepID = data["id"]
+    data = json.loads(data.text)
+    try:
+        data = data["data"]
+        pirepID = data["id"]
+
+        b.config(state="disabled")
+        c.config(state="normal")
+        d.config(state="normal")
+    except:
+        data = data["error"]
+        Log("Error: " + str(data["message"]))
 
 def openWiki():
     webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
@@ -196,13 +203,14 @@ def filePirep():
     "distance": 0
 }       
         data = json.dumps(data)
-        data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data)
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
 
         data = {
     "comment": str(comment.get()),
 }       
         data = json.dumps(data)
-        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data)
+        print(data.text)
         
     else:
         data = {
