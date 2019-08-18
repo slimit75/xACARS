@@ -209,11 +209,6 @@ def quit():
     window.quit()
     window.destroy()
 
-## Delete aircraft screen
-def delete():
-    messagebox.showinfo("xACARS","This feature doesnt exist.. yet.")
-    return
-
 ## Draw main window
 def reload():
     global window
@@ -250,5 +245,4 @@ def reload():
     ttk.Button(window, text='Finish', command=quit).grid(row=a+4, column=0, sticky="we")
     ttk.Button(window, text='Add New', command=new).grid(row=a+4, column=1, sticky="we")
     ttk.Button(window, text='Edit Airline', command=edit).grid(row=a+4, column=2, sticky="we")
-    ttk.Button(window, text='Delete Airline', command=delete).grid(row=a+4, column=3, sticky="we")
     window.mainloop()
