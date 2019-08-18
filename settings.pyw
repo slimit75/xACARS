@@ -16,6 +16,7 @@ import os
 
 # Set Variables
 listOfBool = ["", "True", "False"]
+inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
 restoreToDefault = False
 
 # Define functions
@@ -42,7 +43,10 @@ def drawWindow(x):
     window.iconbitmap('Favicon.ico')
 
     fsuipc = tk.StringVar(window)
-    fsuipc.set(str(config.useFSUIPC))
+    if config.useFSUIPC == True:
+        fsuipc.set(str("FSUIPC (FSX & P3D)"))
+    else:
+        fsuipc.set(str("FlyWithLua (X-Plane)"))
 
     darkMode = tk.StringVar(window)
     darkMode.set(str(config.darkMode))
@@ -62,8 +66,8 @@ def drawWindow(x):
     tk.Label(window, text='Changes require restarting the program.').grid(row=1, columnspan=1, sticky="w")
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
 
-    tk.Label(window, text='Use FSUIPC/XPUIPC: ').grid(row=3, column=0, sticky="e")
-    ttk.OptionMenu(window, fsuipc, *listOfBool).grid(row=3, column=1, sticky="we")
+    tk.Label(window, text='Input Method: ').grid(row=3, column=0, sticky="e")
+    ttk.OptionMenu(window, fsuipc, *inputOptions).grid(row=3, column=1, sticky="we")
     tk.Label(window, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
 
     tk.Label(window, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
@@ -92,7 +96,10 @@ def drawWindow(x):
     if restoreToDefault == False:
         file = open("settings.ini", 'w')
         file.write("[DEFAULT]\n")
-        file.write("fsuipc = " + fsuipc.get() + "\n")
+        if fsuipc.get() == "FSUIPC (FSX & P3D)":
+            file.write("fsuipc = True\n")
+        else:
+            file.write("fsuipc = False\n")
         file.write("darkMode = " + darkMode.get() + "\n")
         file.write("checkForUpdatesOnStart = " + checkUpdate.get() + "\n")
         file.write("getPreReleaseVersions = " + getPreRel.get() + "\n")

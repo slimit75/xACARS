@@ -15,6 +15,7 @@ import track
 import json
 import web
 import config
+import os
 
 # Set variables
 stop = False
@@ -22,7 +23,7 @@ pirepID = ""
 
 # Define functions
 def read(x):
-    file = open('input/' + x + '.txt', "r")
+    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', "r")
     toreturn = file.read()
     file.close()
     return toreturn
@@ -30,9 +31,9 @@ def read(x):
 def loop():
     global pirepID
     while True:
-        track.beginTrack()
+        if config.useFSUIPC == True: track.beginTrack()
         try:
-            track.posUpdate()
+            if config.useFSUIPC == True: track.posUpdate()
 
             
             data = {
@@ -48,8 +49,6 @@ def loop():
 }
             data = json.dumps(data)
             data = web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', data)
-            #data = json.loads(data.text)["data"]
-            #pirepID = data["id"]
         except Exception as e:
             print(e)
 

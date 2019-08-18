@@ -24,10 +24,6 @@ import settings as settingsWindow
 import getBid
 import webbrowser
 
-# Tells track.pyw to begin updating the input folder
-if config.useFSUIPC == True:
-    track.beginTrack()
-
 # Set variables
 window = tk.Tk()
 window.iconbitmap('Favicon.ico')

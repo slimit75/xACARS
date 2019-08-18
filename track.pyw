@@ -11,6 +11,7 @@
 # Import libarys
 import pyuipc
 import math
+import os
 
 # Define functions
 def beginTrack(): # Opens connection to FSUIPC/XPUIPC, and returns if it was successful.
@@ -26,7 +27,7 @@ def endTrack(): # Closes connection to FSUIPC/XPUIPC.
     pyuipc.close()
 
 def writeData(x, y): # Write data to a text file in the input folder. Creates file if there is none, and if there is one it overwrites it.
-    file = open('input/' + x + '.txt', 'w')
+    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', 'w')
     file.write(str(y))
     file.close()
 
