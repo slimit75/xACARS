@@ -178,47 +178,52 @@ def updateEnrouteTime():
     
 def filePirep():
     global pirepID
+
     fpWindow = tk.Tk()
     addComment = tk.IntVar(fpWindow)
     comment = tk.StringVar(fpWindow)
+    fTime = tk.StringVar(fpWindow)
+    fuel = tk.StringVar(fpWindow)
+    distance = tk.StringVar(fpWindow)
 
     fpWindow.iconbitmap('Favicon.ico')
     fpWindow.title('xACARS - File Pirep')
+
     tk.Label(fpWindow, text='File Pirep', font="Arial").grid(sticky="w") 
-    ttk.Separator(fpWindow, orient=tk.HORIZONTAL).grid(row=1, sticky="we")
-    ttk.Checkbutton(fpWindow, text="Add comment?", variable=addComment).grid(row=2, sticky="w")
-    ttk.Entry(fpWindow, textvariable=comment, width=50).grid(row=3, sticky="nwwe")
-    ttk.Button(fpWindow, text='Save & Exit', command=fpWindow.quit).grid(row=4, sticky="we")
+    ttk.Separator(fpWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=2, sticky="we")
+
+    tk.Label(fpWindow, text='Flight Time').grid(row=2, column=0, sticky="w") 
+    ttk.Entry(fpWindow, textvariable=fTime).grid(row=2, column=1, sticky="we")
+
+    tk.Label(fpWindow, text='Fuel Used').grid(row=3, column=0, sticky="w") 
+    ttk.Entry(fpWindow, textvariable=fuel).grid(row=3, column=1, sticky="we")
+
+    tk.Label(fpWindow, text='Distance').grid(row=4, column=0, sticky="w") 
+    ttk.Entry(fpWindow, textvariable=distance).grid(row=4, column=1, sticky="we")
+
+    ttk.Checkbutton(fpWindow, text="Comment?", variable=addComment).grid(row=5, sticky="w")
+    ttk.Entry(fpWindow, textvariable=comment, width=50).grid(row=5, column=1, sticky="nwwe")
+
+    ttk.Button(fpWindow, text='Save & Exit', command=fpWindow.quit).grid(row=6, columnspan=2, sticky="we")
     fpWindow.mainloop()
 
-    addComment = addComment.get()
-    
-    if addComment == 1:
-        data = {
-    "flight_time": 0,
-    "fuel_used": 0,
-    "distance": 0
+    addComment = addComment.get()  
+    data = {
+    "flight_time": str(fTime.get),
+    "fuel_used": str(fuel.get),
+    "distance": str(distance.get)
 }       
-        data = json.dumps(data)
-        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
+    
+    data = json.dumps(data)
+    data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
 
+    if addComment == 1:
         data = {
     "comment": str(comment.get()),
 }       
         data = json.dumps(data)
-        data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data)
-        print(data.text)
-        
-    else:
-        data = {
-    "flight_time": 0,
-    "fuel_used": 0,
-    "distance": 0
-}       
-        data = json.dumps(data)
-        data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
-        
-
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data) 
+    
     f.config(state="disabled")
     Log('#######################################################')
     Log("Hope you had a great flight!")
@@ -281,5 +286,4 @@ menu.add_cascade(label='Help', menu=helpMenu)
 helpMenu.add_command(label='About xACARS', command=about)
 helpMenu.add_command(label='Simulator Connection Test', command=connectionTest)
 helpMenu.add_command(label='Wiki', command=openWiki)
-
 window.mainloop()
