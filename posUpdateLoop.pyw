@@ -51,7 +51,7 @@ def loop():
             #data = json.loads(data.text)["data"]
             #pirepID = data["id"]
         except Exception as e:
-            prfloat(e)
+            print(e)
 
         time.sleep(5)
 

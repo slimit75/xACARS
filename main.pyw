@@ -196,8 +196,14 @@ def filePirep():
     "distance": 0
 }       
         data = json.dumps(data)
+        data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data)
+
+        data = {
+    "comment": str(comment.get()),
+}       
+        data = json.dumps(data)
         data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
-        print(data.text)
+        
     else:
         data = {
     "flight_time": 0,
@@ -206,7 +212,7 @@ def filePirep():
 }       
         data = json.dumps(data)
         data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
-        print(data.text)
+        
 
     f.config(state="disabled")
     Log('#######################################################')
