@@ -5,16 +5,15 @@
 # This file installs xACARS. Thats it.      #
 # ----------------------------------------- #
 
-# Import libarys
-import tkinter as tk # Runs displays
-from tkinter import ttk # Adds seperator in some windows
-from tkinter import messagebox # Drives OS error, warning, or info message
-from tkinter import filedialog # Drives file dialog
-import tempfile # Gets location of temp folder
-import requests # Downloads stuff
-from zipfile import ZipFile # Unzips files
-import os # Multiple Uses
-import time
+# Import libraries 
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog
+import requests
+from zipfile import ZipFile
+import os
+import shutil
 
 # Set variables
 window = tk.Tk()
@@ -81,6 +80,7 @@ def Install():
             install()
     else:
         install()
+
 def install():
     global xpInstalled
     global installFWL
@@ -95,6 +95,8 @@ def install():
     doInstallScript = False
 
     Log('[ Preparing to install... ] #############################')
+    Log("Creating temp folder..")
+    os.mkdir("temp")
     Log("Checking options..")
     if xpInstalled.get() == 1:
         a = a + 1
@@ -118,11 +120,11 @@ def install():
     if doInstallFWL == True:
         Log('[ Installing FlyWithLua... ] ###########################')
         Log("Downloading FlyWithLua...")
-        download_file_from_google_drive('17bfX7wDSr8E6Q1uhXfKiAjXpGjmif1ui', str(os.path.join(os.getcwd(), 'temp.zip')))
+        download_file_from_google_drive('17bfX7wDSr8E6Q1uhXfKiAjXpGjmif1ui', str(os.path.join(os.path.join(os.getcwd(), "temp"), 'FWL.zip')))
         
         updateStatus()
         Log("Extracting FlyWithLua...")
-        with ZipFile(os.path.join(os.getcwd(), 'temp.zip'), 'r') as zipObj:
+        with ZipFile(os.path.join(os.path.join(os.getcwd(), "temp"), 'FWL.zip'), 'r') as zipObj:
             zipObj.extractall(os.path.join(xpdir, str(os.path.join('Resources', 'plugins'))))
         updateStatus()
 
@@ -164,7 +166,10 @@ def install():
         updateStatus()
 
     Log("Cleaning up..")
-    # Clean up files
+    try:
+        shutil.rmtree("temp")
+    except Exception as e:
+        Log("Error removing temp folder: " + str(e))
     updateStatus()
     Log("Creating desktop icon..")
     # Create desktop icon
