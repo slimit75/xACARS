@@ -3,13 +3,8 @@
 
 ACARS system for phpVMS, powered by Python®.
 
-**There is a critical X-Plane only bug where only ground speed and vertical speed are being loaded by the XPUIPC bridge.**
-
-## What are the requirements?
-Moved to [the wiki](https://github.com/slimit75/xACARS/wiki)
-
-## Todo
-Moved to [this GitHub project](https://github.com/slimit75/xACARS/projects/1)
+[Wiki](https://github.com/slimit75/xACARS/wiki)
+[Todo](https://github.com/slimit75/xACARS/projects/1)
 
 ## What do all of the files do?
 Here is a list of what they do:
