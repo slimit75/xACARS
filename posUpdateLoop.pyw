@@ -36,7 +36,7 @@ def loop():
             if config.useFSUIPC == True: track.posUpdate()
 
             
-            data = {
+            exportdata = {
     "lat": float(read('lat')),
     "lon": float(read('lon')),
     "heading": float(read('heading')),
@@ -44,11 +44,11 @@ def loop():
     "vs": float(read('vs')),
     "gs": float(read('gs'))
 }
-            data = {
-    "positions": [data]
+            exportdata = {
+    "positions": [exportdata]
 }
-            data = json.dumps(data)
-            data = web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', data)
+            exportdata = json.dumps(exportdata)
+            exportdata = web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)
         except Exception as e:
             print(e)
 
