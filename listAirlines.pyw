@@ -98,7 +98,7 @@ def terminateEditAirline():
     with open('airlines.ini', 'w') as configfile:
         configfile.write(data1[0])
         config.write(configfile)
-        if not a+1 == len(List):
+        if not a+2 == len(List):
             configfile.write("[" + str(a+2) + "]")
             configfile.write(data2[1])
         configfile.close()
@@ -129,7 +129,7 @@ def new():
     ttk.Entry(newAirWindow, textvariable=name).grid(row=0, column=1)
     ttk.Entry(newAirWindow, textvariable=url).grid(row=1, column=1)
     ttk.Entry(newAirWindow, textvariable=username).grid(row=2, column=1)
-    ttk.Entry(newAirWindow, textvariable=apiKey).grid(row=3, column=1)
+    ttk.Entry(newAirWindow, show="*", textvariable=apiKey).grid(row=3, column=1)
     ttk.Button(newAirWindow, text='Create', command=terminateNewAirline).grid(row=4, columnspan=2, sticky='we')
     newAirWindow.mainloop()
     newAirWindow.destroy()
@@ -192,7 +192,7 @@ def edit():
     ttk.Entry(editAirWindow, textvariable=name, text=name).grid(row=1, column=1)
     ttk.Entry(editAirWindow, textvariable=url, text=url).grid(row=2, column=1)
     ttk.Entry(editAirWindow, textvariable=username, text=username).grid(row=3, column=1)
-    ttk.Entry(editAirWindow, textvariable=apiKey, text=apiKey).grid(row=4, column=1)
+    ttk.Entry(editAirWindow, show="*", textvariable=apiKey, text=apiKey).grid(row=4, column=1)
     ttk.Button(editAirWindow, text='Update', command=terminateEditAirline).grid(row=5, column=0, sticky='we')
     ttk.Button(editAirWindow, text='Autofill', command=editAutofill).grid(row=5, column=1, sticky='we')
     editAirWindow.mainloop()

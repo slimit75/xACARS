@@ -49,7 +49,7 @@ def login():
         tk.Label(window, text='Username: ').grid(row=1, column=0)
         ttk.Entry(window, textvariable=username).grid(row=1, column=1)
         tk.Label(window, text='API Key: ').grid(row=2, column=0)
-        ttk.Entry(window, textvariable=key, text=key).grid(row=2, column=1)
+        ttk.Entry(window, show="*", textvariable=key, text=key).grid(row=2, column=1)
         ttk.Button(window, text="Autofill", command=autofill).grid(row=2, column=2)
         ttk.Button(window, text="Autofill", command=autofillUsername).grid(row=1, column=2)
         ttk.Button(window, text='Log In', command=terminate).grid(row=3, columnspan=3, sticky="we")
