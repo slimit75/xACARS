@@ -12,6 +12,7 @@ import tkinter as tk # Runs displays
 from tkinter import ttk # Adds seperator in some windows
 from tkinter import messagebox # Drives OS error, warning, or info message
 import json # Manages json conversions
+import time # Manages total flight time calculation
 
 # Import local files
 import config
@@ -28,6 +29,7 @@ import webbrowser
 window = tk.Tk()
 window.iconbitmap('Favicon.ico')
 airline = tk.StringVar()
+flightTime = 0
 
 # Define functions
 def about():
@@ -92,34 +94,63 @@ def preFile():
     global data
     global pirepID
     global Log
-    preFileWindow = tk.Tk()
+    global data
 
+    preFileWindow = tk.Tk()
     cruiseAlt = tk.StringVar(preFileWindow)
     plannedFlightTime = tk.StringVar(preFileWindow)
     plannedDistance = tk.StringVar(preFileWindow)
     route = tk.StringVar(preFileWindow)
+    selacf = tk.StringVar(preFileWindow)
 
+    acf = []
+    acf2 = []
+    ids = []
+    acf.append("Please select an aircraft")
+    for key in data["flight"]["subfleets"]:
+        for key2 in key["aircraft"]:
+            acf2.append(str(key2["registration"]) + " [" + str(key2["icao"]) + "]")
+            ids.append(key2["id"])
+
+    #acf2.reverse()
+    
+    for key in acf2:
+        acf.append(key)
+    selacf.set(acf[0])
+    
     preFileWindow.iconbitmap('Favicon.ico')
     preFileWindow.title('xACARS - Prefile')
     tk.Label(preFileWindow, text="Prefile", font="Arial").grid(row=0, column=0, columnspan=3, sticky="w")
     ttk.Separator(preFileWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
-    tk.Label(preFileWindow, text="Cruise FL: ").grid(row=2, column=0)
-    ttk.Entry(preFileWindow, textvariable=cruiseAlt).grid(row=2, column=1, sticky="we")
-    tk.Label(preFileWindow, text="Planned Time: ").grid(row=3, column=0)
-    ttk.Entry(preFileWindow, textvariable=plannedFlightTime).grid(row=3, column=1, sticky="we")
-    tk.Label(preFileWindow, text="minutes").grid(row=3, column=2, sticky="w")
-    tk.Label(preFileWindow, text="Planned Distance: ").grid(row=4, column=0)
-    ttk.Entry(preFileWindow, textvariable=plannedDistance).grid(row=4, column=1, sticky="we")
-    tk.Label(preFileWindow, text="nm").grid(row=4, column=2, sticky="w")
-    tk.Label(preFileWindow, text="Route:").grid(row=5, column=0)
-    ttk.Entry(preFileWindow, textvariable=route).grid(row=5, column=1, sticky="we")
-    ttk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=6, columnspan=4, sticky="we")
+    tk.Label(preFileWindow, text="Aircraft: ").grid(row=2, column=0)
+    ttk.OptionMenu(preFileWindow, selacf, *acf).grid(row=2, column=1, sticky="we")
+    tk.Label(preFileWindow, text="Cruise FL: ").grid(row=3, column=0)
+    ttk.Entry(preFileWindow, textvariable=cruiseAlt).grid(row=3, column=1, sticky="we")
+    tk.Label(preFileWindow, text="Planned Time: ").grid(row=4, column=0)
+    ttk.Entry(preFileWindow, textvariable=plannedFlightTime).grid(row=4, column=1, sticky="we")
+    tk.Label(preFileWindow, text="minutes").grid(row=4, column=2, sticky="w")
+    tk.Label(preFileWindow, text="Planned Distance: ").grid(row=5, column=0)
+    ttk.Entry(preFileWindow, textvariable=plannedDistance).grid(row=5, column=1, sticky="we")
+    tk.Label(preFileWindow, text="nm").grid(row=5, column=2, sticky="w")
+    tk.Label(preFileWindow, text="Route:").grid(row=6, column=0)
+    ttk.Entry(preFileWindow, textvariable=route).grid(row=6, column=1, sticky="we")
+    ttk.Button(preFileWindow, text='Save & Exit', command=preFileWindow.quit).grid(row=7, columnspan=4, sticky="we")
     preFileWindow.mainloop()
     preFileWindow.destroy()
 
+    selacf = selacf.get()
+
+    a = 0
+    for key in acf:
+        print(key)
+        if key == selacf:
+            break
+        else:
+            a = a + 1
+    
     data = {
     "airline_id": str(data["flight"]["airline_id"]),
-    "aircraft_id": "2",
+    "aircraft_id": str(ids[a-1]),
     "flight_number": str(data["flight"]["flight_number"]),
     "route_code": str(data["flight"]["route_code"]),
     "route_leg": str(data["flight"]["route_leg"]),
@@ -129,7 +160,7 @@ def preFile():
     "planned_distance": str(plannedDistance.get()),
     "planned_flight_time": str(plannedFlightTime.get()),
     "route": str(route.get()),
-    "source_name": "ACARS",
+    "source_name": "xACARS",
     "flight_type": str(data["flight"]["flight_type"])
 }   
     data = json.dumps(data)
@@ -154,6 +185,8 @@ def updateCheck():
 
 def startFlight():
     global pirepID
+    global flightTime
+    flightTime = int(time.time())
     posUpdateLoop.startLoop(pirepID)
     Log('#######################################################')
     Log("Now logging flight.")
@@ -178,11 +211,11 @@ def updateEnrouteTime():
     
 def filePirep():
     global pirepID
+    global flightTime
 
     fpWindow = tk.Tk()
     addComment = tk.IntVar(fpWindow)
     comment = tk.StringVar(fpWindow)
-    fTime = tk.StringVar(fpWindow)
     fuel = tk.StringVar(fpWindow)
     distance = tk.StringVar(fpWindow)
 
@@ -192,35 +225,28 @@ def filePirep():
     tk.Label(fpWindow, text='File Pirep', font="Arial").grid(sticky="w") 
     ttk.Separator(fpWindow, orient=tk.HORIZONTAL).grid(row=1, columnspan=2, sticky="we")
 
-    tk.Label(fpWindow, text='Flight Time').grid(row=2, column=0, sticky="w") 
-    ttk.Entry(fpWindow, textvariable=fTime).grid(row=2, column=1, sticky="we")
+    tk.Label(fpWindow, text='Fuel Used').grid(row=2, column=0, sticky="w") 
+    ttk.Entry(fpWindow, textvariable=fuel).grid(row=2, column=1, sticky="we")
 
-    tk.Label(fpWindow, text='Fuel Used').grid(row=3, column=0, sticky="w") 
-    ttk.Entry(fpWindow, textvariable=fuel).grid(row=3, column=1, sticky="we")
+    tk.Label(fpWindow, text='Distance').grid(row=3, column=0, sticky="w") 
+    ttk.Entry(fpWindow, textvariable=distance).grid(row=3, column=1, sticky="we")
 
-    tk.Label(fpWindow, text='Distance').grid(row=4, column=0, sticky="w") 
-    ttk.Entry(fpWindow, textvariable=distance).grid(row=4, column=1, sticky="we")
+    ttk.Checkbutton(fpWindow, text="Comment?", variable=addComment).grid(row=4, sticky="w")
+    ttk.Entry(fpWindow, textvariable=comment, width=50).grid(row=4, column=1, sticky="nwwe")
 
-    ttk.Checkbutton(fpWindow, text="Comment?", variable=addComment).grid(row=5, sticky="w")
-    ttk.Entry(fpWindow, textvariable=comment, width=50).grid(row=5, column=1, sticky="nwwe")
-
-    ttk.Button(fpWindow, text='Save & Exit', command=fpWindow.quit).grid(row=6, columnspan=2, sticky="we")
+    ttk.Button(fpWindow, text='Save & Exit', command=fpWindow.quit).grid(row=5, columnspan=2, sticky="we")
     fpWindow.mainloop()
 
+    flightTime = int(time.time()) - flightTime
     addComment = addComment.get()  
-    data = {
-    "flight_time": str(fTime.get),
-    "fuel_used": str(fuel.get),
-    "distance": str(distance.get)
-}       
+    data = {"flight_time": str(flightTime),"fuel_used": str(fuel.get),"distance": str(distance.get)}       
     
     data = json.dumps(data)
     data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
+    print(data.text)
 
     if addComment == 1:
-        data = {
-    "comment": str(comment.get()),
-}       
+        data = {"comment": str(comment.get()),}       
         data = json.dumps(data)
         data = web.post(config.website + '/api/pireps/' + pirepID + '/comments', data) 
     
