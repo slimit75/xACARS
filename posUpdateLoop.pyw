@@ -25,6 +25,7 @@ pirepID = ""
 def read(x):
     file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', "r")
     toreturn = file.read()
+    print(file.read())
     file.close()
     print(toreturn)
     return toreturn
@@ -37,17 +38,9 @@ def loop():
             if config.useFSUIPC == True: track.posUpdate()
 
             
-            exportdata = {
-    "lat": read('lat'),
-    "lon": read('lon'),
-    "heading": read('heading'),
-    "altitude": read('altitude'),
-    "vs": read('vs'),
-    "gs": read('gs')
-}
-            exportdata = {
-    "positions": [exportdata]
-}
+            exportdata = {"lat": read('lat'),"lon": read('lon'),"heading": read('heading'),"altitude": read('altitude'),"vs": read('vs'),"gs": read('gs')}
+            exportdata = {"positions": [exportdata]}
+
             exportdata = json.dumps(exportdata)
             
             web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)

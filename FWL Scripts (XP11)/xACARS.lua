@@ -10,23 +10,43 @@ starting_time = os.clock()
 function writeData(x, y)
     file = joinPath(fileLoc, 'input')
     file = joinPath(file, x .. '.txt')
-    print(y)
+    
     f = io.open(file, "w")
     io.output(f)
-    io.write(y)
+    io.write(tostring(y))
     io.close(f)
 end
 
 function refresh()
-    if os.clock() < starting_time + 5 then
-        writeData('lat', get("sim/flightmodel/position/latitude"))
-        writeData('lon', get("sim/flightmodel/position/longitude"))
-        writeData('heading', get("sim/cockpit2/gauges/indicators/compass_heading_deg_mag"))
-        writeData('vs', get("sim/cockpit2/gauges/indicators/vvi_fpm_pilot"))
-        writeData('altitude', get("sim/cockpit2/gauges/indicators/altitude_ft_pilot"))
+    if os.clock() < starting_time + 0.4 then
+        lat = LATITUDE
+        writeData('lat', lat)
+        lon = LONGITUDE
+        writeData('lon', lon)
+        hdg = get("sim/cockpit2/gauges/indicators/compass_heading_deg_mag")
+        writeData('heading', hdg)
+        vs = get("sim/cockpit2/gauges/indicators/vvi_fpm_pilot")
+        vs = tostring(vs)
+        if string.match(vs, "e") then
+            vs = 0.0
+        else
+            vs = tonumber(vs)
+            vs = vs * 1.94384
+        end
+        writeData("vs", vs)
+
+        alt = get("sim/cockpit2/gauges/indicators/altitude_ft_pilot")
+        writeData('altitude', alt)
         gs = get("sim/flightmodel/position/groundspeed")
-        gs = gs * 1.94384
-        writeData('gs', gs)
+        gs = tostring(gs)
+        if string.match(gs, "e") then
+            gs = 0.0
+        else
+            gs = tonumber(gs)
+            gs = gs * 1.94384
+        end
+        
+        writeData("gs", gs)
 
         starting_time = os.clock()
     end
