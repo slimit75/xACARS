@@ -26,6 +26,7 @@ def read(x):
     file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', "r")
     toreturn = file.read()
     file.close()
+    print(toreturn)
     return toreturn
 
 def loop():
@@ -37,18 +38,21 @@ def loop():
 
             
             exportdata = {
-    "lat": float(read('lat')),
-    "lon": float(read('lon')),
-    "heading": float(read('heading')),
-    "altitude": float(read('altitude')),
-    "vs": float(read('vs')),
-    "gs": float(read('gs'))
+    "lat": read('lat'),
+    "lon": read('lon'),
+    "heading": read('heading'),
+    "altitude": read('altitude'),
+    "vs": read('vs'),
+    "gs": read('gs')
 }
             exportdata = {
     "positions": [exportdata]
 }
             exportdata = json.dumps(exportdata)
-            exportdata = web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)
+            
+            web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)
+
+            print(exportdata)
         except Exception as e:
             print(e)
 

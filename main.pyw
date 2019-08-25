@@ -239,11 +239,11 @@ def filePirep():
 
     flightTime = int(time.time()) - flightTime
     addComment = addComment.get()  
-    data = {"flight_time": str(flightTime),"fuel_used": str(fuel.get),"distance": str(distance.get)}       
+    flightTime = time.strftime('%H%M', time.gmtime(flightTime))
+    data = {"flight_time": int(flightTime),"fuel_used": int(fuel.get()),"distance": int(distance.get())}       
     
     data = json.dumps(data)
     data = web.post(config.website + '/api/pireps/' + pirepID + '/file', data)
-    print(data.text)
 
     if addComment == 1:
         data = {"comment": str(comment.get()),}       
