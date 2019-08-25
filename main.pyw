@@ -13,6 +13,8 @@ from tkinter import ttk # Adds seperator in some windows
 from tkinter import messagebox # Drives OS error, warning, or info message
 import json # Manages json conversions
 import time # Manages total flight time calculation
+import urllib.request as urllib # Manages update checking
+import os # Removes files 
 
 # Import local files
 import config
@@ -180,9 +182,6 @@ def preFile():
 def openWiki():
     webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
 
-def updateCheck():
-    messagebox.showinfo("xACARS","This feature doesnt exist.. yet.")
-
 def startFlight():
     global pirepID
     global flightTime
@@ -261,6 +260,28 @@ def finishFlight():
     d.config(state="disabled")
     e.config(state="disabled")
 
+def checkForUpdates():
+    Log('#######################################################')
+    Log("Checking for updates..")
+
+    urllib.urlretrieve("https://raw.github.com/slimit75/xACARS/installer/update.py", 'update.py')
+
+    import update
+    if config.getPreRel == True:
+        if update.latestBeta == config.version:
+            Log("No updates avalible.")
+        else:
+            Log("There is a update avalible, please get it from")
+            Log("https://github.com/slimit75/xACARS/releases")
+    else:
+        if update.latestStable == config.version:
+            Log("No updates avalible.")
+        else:
+            Log("There is a update avalible, please get it from")
+            Log("https://github.com/slimit75/xACARS/releases")
+
+    os.remove("update.py")
+
 # Draw window
 window.title('xACARS ' + config.version)
 tk.Label(window, text="Welcome to xACARS", font="Arial").grid(row=0, column=0)
@@ -295,10 +316,13 @@ if config.loginMessage == True:
     Log('#######################################################')
     Log("You can disable this message in settings.")
 
+if config.checkUpdate == True:
+    checkForUpdates()
+
 mainMenu = tk.Menu(menu, tearoff=False)
 menu.add_cascade(label='Main', menu=mainMenu) 
 mainMenu.add_command(label='Preferences', command=settings)
-mainMenu.add_command(label='Check for updates', command=updateCheck)
+mainMenu.add_command(label='Check for updates', command=checkForUpdates)
 mainMenu.add_separator()
 mainMenu.add_command(label='Exit', command=window.destroy) 
 
