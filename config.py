@@ -82,8 +82,8 @@ def reloadList():
             websites.append(config[key]['URL'])
             savedAPIKeys.append(config[key]['apikey'])
             usernames.append(config[key]['username'])
-    except Exception:
-        pass
+    except Exception as e:
+        print(e)
     
 # Converts a string to a boolean. Used by no external files
 def stringToBool(x):

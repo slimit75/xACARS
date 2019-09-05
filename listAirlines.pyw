@@ -106,6 +106,61 @@ def terminateEditAirline():
     editAirWindow.quit()
     return
 
+## Closes the delete airline screen
+def terminateDeleteAirline():
+    global airline
+    global delAirWindow
+    
+    websites = configLib.websites
+    savedAPIKeys = configLib.savedAPIKeys
+    usernames = configLib.usernames
+    List = configLib.list
+
+    airline = airline.get()
+
+    a = List.index(airline)
+    
+    config = configparser.ConfigParser()
+
+    no = """
+    if apiKey == "":
+        if username == "":
+            config[str(a+1)] = {'name': name, 'url': url}
+        else:
+            config[str(a+1)] = {'name': name, 'url': url, 'username': username}
+    else:
+        if username == "":
+            config[str(a+1)] = {'name': name, 'url': url, 'apikey': apiKey}
+        else:
+            config[str(a+1)] = {'name': name, 'url': url, 'apikey': apiKey, 'username': username}
+    """
+
+    file = open('airlines.ini', 'r')
+    data = file.read()
+    file.close()
+
+    print(str(a+1))
+    data1 = data.split("[" + str(a) + "]")
+    print(data1[0])
+    try:
+        data2 = data1[1].split("[" + str(a+1) + "]")
+        print(data2[1])
+    except Exception as e:
+        print(e)
+        data2 = ["", ""]
+
+    with open('airlines.ini', 'w') as configfile:
+        configfile.write(data1[0])
+        #config.write(configfile)
+        if not data2[1] == "":
+            configfile.write("[" + str(a) + "]")
+            configfile.write(data2[1])
+        configfile.close()
+        config.write(configfile)
+
+    delAirWindow.quit()
+    return
+
 ## New airline screen
 def new():
     global name
@@ -115,7 +170,7 @@ def new():
     global username
 
     newAirWindow = tk.Tk()
-    window.iconbitmap('Favicon.ico')
+    newAirWindow.iconbitmap('Favicon.ico')
     name = tk.StringVar(newAirWindow)
     url = tk.StringVar(newAirWindow)
     apiKey = tk.StringVar(newAirWindow)
@@ -135,8 +190,8 @@ def new():
     newAirWindow.destroy()
 
     configLib.reloadList()
-    window.quit()
-    window.destroy()
+    newAirWindow.quit()
+    newAirWindow.destroy()
     reload()
 
 ## Autofill for the edit airline screen
@@ -160,6 +215,36 @@ def editAutofill():
     if not usernames[a] == "None Saved":
         username.set(usernames[a])
 
+## Delete iarline screen
+def delete():
+    global airline
+    global name
+    global url
+    global apiKey
+    global username
+    global delAirWindow
+
+    websites = configLib.websites
+    savedAPIKeys = configLib.savedAPIKeys
+    usernames = configLib.usernames
+    List = configLib.list
+
+    delAirWindow = tk.Tk()
+    delAirWindow.iconbitmap('Favicon.ico')
+    airline = tk.StringVar(delAirWindow)
+
+    delAirWindow.title('xACARS ' + configLib.version)
+    tk.Label(delAirWindow, text='Airline to delete: ').grid(row=0, column=0)
+    ttk.OptionMenu(delAirWindow, airline, *List).grid(row=0, column=1)
+    ttk.Button(delAirWindow, text='Update', command=terminateDeleteAirline).grid(row=1, columnspan=2, sticky='we')
+    delAirWindow.mainloop()
+    delAirWindow.destroy()
+
+    configLib.reloadList()
+    delAirWindow.quit()
+    delAirWindow.destroy()
+    reload()
+
 ## Edit screen
 def edit():
     global airline
@@ -175,7 +260,7 @@ def edit():
     List = configLib.list
 
     editAirWindow = tk.Tk()
-    window.iconbitmap('Favicon.ico')
+    editAirWindow.iconbitmap('Favicon.ico')
     airline = tk.StringVar(editAirWindow)
     name = tk.StringVar(editAirWindow)
     url = tk.StringVar(editAirWindow)
@@ -199,8 +284,8 @@ def edit():
     editAirWindow.destroy()
 
     configLib.reloadList()
-    window.quit()
-    window.destroy()
+    editAirWindow.quit()
+    editAirWindow.destroy()
     reload()
 
 ## Closes main menu
@@ -243,6 +328,7 @@ def reload():
 
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=a+3, columnspan=4, sticky="we")
     ttk.Button(window, text='Finish', command=quit).grid(row=a+4, column=0, sticky="we")
-    ttk.Button(window, text='Add New', command=new).grid(row=a+4, column=1, sticky="we")
+    ttk.Button(window, text='Add Airline', command=new).grid(row=a+4, column=1, sticky="we")
     ttk.Button(window, text='Edit Airline', command=edit).grid(row=a+4, column=2, sticky="we")
+    ttk.Button(window, text='Delete Airline', command=delete).grid(row=a+4, column=3, sticky="we")
     window.mainloop()
