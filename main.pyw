@@ -264,23 +264,22 @@ def checkForUpdates():
     Log('#######################################################')
     Log("Checking for updates..")
 
-    urllib.urlretrieve("https://raw.github.com/slimit75/xACARS/installer/update.py", 'update.py')
+    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/installer/updates.json')
+    data = json.loads(data)
 
-    import update
     if config.getPreRel == True:
-        if update.latestBeta == config.version:
+        if str(data["latestBeta"]) == config.version:
             Log("No updates avalible.")
         else:
             Log("There is a update avalible, please get it from")
             Log("https://github.com/slimit75/xACARS/releases")
     else:
-        if update.latestStable == config.version:
+        if str(data["latestStable"]) == config.version:
             Log("No updates avalible.")
         else:
             Log("There is a update avalible, please get it from")
             Log("https://github.com/slimit75/xACARS/releases")
 
-    os.remove("update.py")
 
 # Draw window
 window.title('xACARS ' + config.version)
