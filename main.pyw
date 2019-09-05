@@ -158,13 +158,14 @@ def preFile():
     "route_leg": str(data["flight"]["route_leg"]),
     "dpt_airport_id": str(data["flight"]["dpt_airport_id"]),
     "arr_airport_id": str(data["flight"]["arr_airport_id"]),
-    "level": str(cruiseAlt.get()),
-    "planned_distance": str(plannedDistance.get()),
-    "planned_flight_time": str(plannedFlightTime.get()),
+    "level": int(cruiseAlt.get()),
+    "planned_distance": int(plannedDistance.get()),
+    "planned_flight_time": int(plannedFlightTime.get()),
     "route": str(route.get()),
     "source_name": "xACARS",
     "flight_type": str(data["flight"]["flight_type"])
-}   
+    }  
+    
     data = json.dumps(data)
     data = web.post(config.website + '/api/pireps/prefile', data)
     data = json.loads(data.text)
@@ -204,7 +205,10 @@ def updateEnrouteTime():
     ttk.Button(uetWindow, text='Save & Exit', command=uetWindow.quit).grid(row=3, columnspan=2, sticky="we")
     uetWindow.mainloop()
 
-    # Update enroute time
+    newEnrouteTime = newEnrouteTime.get()
+    data = {"planned_flight_time": int(newEnrouteTime)}
+    print(data)
+    data = web.post(config.website + '/api/pireps/' + pirepID + '/update', data) 
 
     uetWindow.destroy()
     
@@ -264,7 +268,7 @@ def checkForUpdates():
     Log('#######################################################')
     Log("Checking for updates..")
 
-    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/installer/updates.json')
+    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json')
     data = json.loads(data)
 
     if config.getPreRel == True:

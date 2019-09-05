@@ -33,7 +33,7 @@ if os.path.exists('settings.ini') == False:
     file.close()
 
 # Set static variables
-version = "v1.0.0-alpha1"
+version = "v1.0.0-alpha2"
 
 # Set variables that need to be changed later
 airline = "None"
@@ -82,8 +82,8 @@ def reloadList():
             websites.append(config[key]['URL'])
             savedAPIKeys.append(config[key]['apikey'])
             usernames.append(config[key]['username'])
-    except Exception:
-        pass
+    except Exception as e:
+        print(e)
     
 # Converts a string to a boolean. Used by no external files
 def stringToBool(x):
