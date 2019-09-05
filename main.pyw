@@ -3,8 +3,7 @@
 # Speed_Limit75                             #
 #                                           #
 # This file runs the main window, and       #
-# getBid.pyw/setupFlight.pyw will move here #
-# in the future.                            #
+# getBid.pyw will move here in the future.  #
 # ----------------------------------------- #
 
 # Import libarys
