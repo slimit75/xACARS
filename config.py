@@ -33,7 +33,7 @@ if os.path.exists('settings.ini') == False:
     file.close()
 
 # Set static variables
-version = "v1.0.0-alpha1"
+version = "v1.0.0-alpha2"
 
 # Set variables that need to be changed later
 airline = "None"

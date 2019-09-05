@@ -264,7 +264,7 @@ def checkForUpdates():
     Log('#######################################################')
     Log("Checking for updates..")
 
-    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/installer/updates.json')
+    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json')
     data = json.loads(data)
 
     if config.getPreRel == True:
