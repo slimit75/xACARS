@@ -8,13 +8,13 @@
 # ----------------------------------------- #
 
 # Import libarys
-import tkinter as tk # Runs displays
-from tkinter import ttk # Adds seperator in some windows
-from tkinter import messagebox # Drives OS error, warning, or info message
-import json # Manages json conversions
-import time # Manages total flight time calculation
-import urllib.request as urllib # Manages update checking
-import os # Removes files 
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import json
+import time
+import urllib.request as urllib
+import os
 
 # Import local files
 import config
