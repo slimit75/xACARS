@@ -3,6 +3,8 @@
 
 ACARS system for phpVMS, powered by Python®.
 
+xACARS only supports Windows at the time of writing, but Linux support can be found on the linux branch.
+
 [Wiki](https://github.com/slimit75/xACARS/wiki)
 
 [Todo](https://github.com/slimit75/xACARS/projects/1)
