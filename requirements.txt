@@ -1,4 +1,4 @@
-PyInstaller==3.4
+PyInstaller==3.6
 pyuipc==0.4
 pywin32==224
 pywin32-ctypes==0.2.0
