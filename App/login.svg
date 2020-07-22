@@ -17,6 +17,18 @@
   <defs
      id="defs2">
     <rect
+       id="rect924"
+       height="102.15325"
+       width="65.747567"
+       y="28.798521"
+       x="147.79619" />
+    <rect
+       id="rect918"
+       height="69.551146"
+       width="65.475884"
+       y="33.145468"
+       x="142.63419" />
+    <rect
        x="6.4493976"
        y="17.152653"
        width="56.260702"
@@ -159,5 +171,38 @@
        y="119.0625"
        rx="2.6458333"
        ry="2.6458333" />
+    <text
+       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:10.58333317px;line-height:1.25;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect918);"
+       id="text916"
+       xml:space="preserve" />
+    <text
+       transform="translate(-4.6186308,-4.0752625)"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:0;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect924);fill:#000000;fill-opacity:1;stroke:none;"
+       id="text922"
+       xml:space="preserve"><tspan
+         x="147.79688"
+         y="34.983047"><tspan
+           style="font-size:7.40833px">Welcome!</tspan><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">
+</tspan></tspan><tspan
+         x="147.79688"
+         y="41.735709"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">
+</tspan></tspan><tspan
+         x="147.79688"
+         y="47.821128"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">If you are new, you can </tspan></tspan><tspan
+         x="147.79688"
+         y="53.906547"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">add VAs to the &quot;Saved VAs&quot; </tspan></tspan><tspan
+         x="147.79688"
+         y="59.991965"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">list in settings. You have to </tspan></tspan><tspan
+         x="147.79688"
+         y="66.077384"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">be logged into a VA to </tspan></tspan><tspan
+         x="147.79688"
+         y="72.162803"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29167px;line-height:1.15;font-family:'Futura Md BT';-inkscape-font-specification:'Futura Md BT';fill:#ffffff;fill-opacity:1">access the settings.</tspan></tspan></text>
   </g>
 </svg>
