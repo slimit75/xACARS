@@ -1,6 +1,0 @@
-PyInstaller==3.6
-pyuipc==0.4
-pywin32==224
-pywin32-ctypes==0.2.0
-requests==2.22.0
-urllib3==1.25.3
