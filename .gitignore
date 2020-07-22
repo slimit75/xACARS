@@ -1,8 +1,1 @@
-run.bat
-__pycache__/
-.vscode/*
-*.ini
-*.txt
-build/*
-dist/*
-*.spec
+App/Electron/*
