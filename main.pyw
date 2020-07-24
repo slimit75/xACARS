@@ -14,6 +14,7 @@ import json
 import time
 import urllib.request as urllib
 import os
+import requests
 
 # Import local files
 import config
@@ -51,22 +52,22 @@ def Log(text):
 
 def connectionTest():
     Log('#######################################################') 
-    Log('Attempting to connect to FSUIPC/XPUIPC...')
+    Log('Attempting to connect to your simulator...')
     track.endTrack()
     isSuccess = track.beginTrack()
     if isSuccess == "Can Connect":
-        Log('Can connect to FSUIPC.')
+        Log('Connected to simulator!')
         track.posUpdate()
     else:
-        Log('Unable to connect.')
+        Log('ERROR: Unable to connect.')
         Log(isSuccess)
 
 def login():
     global a
     Log('#######################################################')
-    Log("Attempting login..")
+    Log("Logging in...")
     loginWindow.login()
-    Log("Logged in under " + config.airline)
+    Log("Signed in with " + config.airline)
     a.config(state="normal")
     g.config(state="disabled")
 
@@ -95,7 +96,6 @@ def preFile():
     global data
     global pirepID
     global Log
-    global data
 
     preFileWindow = tk.Tk()
     cruiseAlt = tk.StringVar(preFileWindow)
@@ -108,7 +108,9 @@ def preFile():
     acf2 = []
     ids = []
     acf.append("Please select an aircraft")
-    for key in data["flight"]["subfleets"]:
+    print("Data: ", data)
+    print("##########")
+    for key in data["flight"]["subfleet"]:
         for key2 in key["aircraft"]:
             acf2.append(str(key2["registration"]) + " [" + str(key2["icao"]) + "]")
             ids.append(key2["id"])
@@ -267,8 +269,7 @@ def checkForUpdates():
     Log('#######################################################')
     Log("Checking for updates..")
 
-    data = web.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json')
-    data = json.loads(data)
+    data = requests.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json').json()
 
     if config.getPreRel == True:
         if str(data["latestBeta"]) == config.version:
