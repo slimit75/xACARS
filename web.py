@@ -34,5 +34,9 @@ def post(website, datax): # For future use
     except Exception as e:
         return str(e)
 
+def checkForUpdates():
+    data = requests.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json').json()
+    return config.getPreRel == True and (str(data["latestBeta"]) == config.version or str(data["latestStable"]) == config.version)
+
 def delete(x): # For future use
     return 

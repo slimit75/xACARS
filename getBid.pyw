@@ -24,16 +24,22 @@ selBid = ""
 # Define Functions
 def draw():
     global selBid
+
     window = tk.Tk()
     window.iconbitmap('Favicon.ico')
-    selBid = tk.StringVar(window)
     window.title('xACARS - Bids')
+
+    selBid = tk.StringVar(window)
+
     tk.Label(window, text='Bids', font="Arial").grid(row=0, columnspan=1, sticky="w") 
     ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
+
+    # Get bids from phpVMS
     data = web.get(config.website + '/api/user/bids')
-    ## Check for and list bids
+
+    # Check for and list bids
     if data == '{"data":[]}':
-        tk.Label(window, text="No bids! Place a bid on the airline website and restart xACARS!").grid(row=1, column=0)
+        tk.Label(window, text="No bids found! Please place a bid on your airline's website and restart xACARS.").grid(row=1, column=0)
     else:
         bids = json.loads(data)["data"]
         bidList.append(str(bids[0]["flight"]["ident"]) + " (" + str(bids[0]["flight"]["dpt_airport_id"]) + " - " + str(bids[0]["flight"]["arr_airport_id"]) + ")")
