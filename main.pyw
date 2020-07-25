@@ -67,6 +67,7 @@ def connectionTest():
     else:
         Log('ERROR: Unable to connect.')
         Log(isSuccess)
+    track.endTrack()
 
 
 def login():
@@ -126,7 +127,6 @@ def preFile():
     acf2 = []
     ids = []
     acf.append("Please select an aircraft")
-    print(flightData["subfleets"])
 
     for key in flightData["subfleets"]:
         for key2 in key["aircraft"]:

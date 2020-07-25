@@ -4,5 +4,5 @@ __pycache__/
 *.ini
 *.txt
 build/*
-dist/*
+dist
 *.spec
