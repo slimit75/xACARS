@@ -4,9 +4,35 @@
     <head>
         <title>xACARS Rewrite</title>
         <link rel="stylesheet" id="stylesheet" type="text/css" href="app.css">
+        <!--
         <link href='https://fonts.googleapis.com/css?family=B612' rel='stylesheet'>
+        -->
     </head>
+    <script>
+        const remote = require('electron').remote;
+        let window = remote.getCurrentWindow();
+
+        function appMinimize() {
+            window.minimize();
+        }
+
+        function appExit() {
+            window.close();
+        }
+    </script>
     <body>
-        <img src="login.svg">
+        <img class="bg" src="bg.svg">
+
+        <div class="titleBar">
+            <h1 id="title">xACARS Rewrite</h1>
+
+            <button onclick="appMinimize()">
+                <img id="min" src="min.png">
+            </button>
+
+            <button onclick="appExit()">
+                <img id="exit" src="close.png">
+            </button>
+        </div>
     </body>
 </html>

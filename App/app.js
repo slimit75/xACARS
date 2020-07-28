@@ -4,14 +4,14 @@ const path = require("path")
 function createWindow () {
     const modalPath = path.join('file://', __dirname, "login.html")
     let win = new BrowserWindow({
-        transparent: false,
+        transparent: true,
         frame: false,
         resizable: false,
         webPreferences: {
             nodeIntegration: true
         },
         width: 800, 
-        height: 600
+        height: 605
     })
 
     win.on("close", () => {win = null})
