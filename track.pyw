@@ -13,9 +13,6 @@ import pyuipc
 import math
 import os
 
-# Define functions
-
-
 # Opens connection to FSUIPC/XPUIPC, and returns if it was successful.
 def beginTrack():
     try:
@@ -25,7 +22,6 @@ def beginTrack():
         return "UIPC Connection Error: " + str(e.errorCode)
     except Exception as e:
         return "ERROR: " + str(e)
-
 
 def endTrack():  # Closes connection to FSUIPC/XPUIPC.
     pyuipc.close()
