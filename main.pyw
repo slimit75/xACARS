@@ -10,6 +10,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from PIL import ImageTk, Image
 import json
 import time
 import urllib.request as urllib
@@ -26,10 +27,11 @@ import listAirlines
 import settings as settingsWindow
 import getBid
 
-''' 
-Draw xACARS UI 
-
 '''
+Draw xACARS UI
+'''
+
+
 class App:
 
     def __init__(self, root):
@@ -44,19 +46,25 @@ class App:
         self.username = tk.StringVar(self.root)
         self.key = tk.StringVar(self.root)
 
+        self.List = config.list
+        self.websites = config.websites
+        self.savedAPIKeys = config.savedAPIKeys
+        self.usernames = config.usernames
+
         self.flightTime = 0
 
         # Widgets
+        self.home()
         self.login()
 
     def menu(self):
         # Header
         self.title = tk.Label(self.root, text="Welcome to xACARS",
                               font="Arial")
-        self.title.grid(row=0, column=0)
+        self.title.grid(row=2, column=0)
 
         # Toolbar
-        self.toolbar = tk.Menu(window)
+        self.toolbar = tk.Menu(self.root)
 
         self.mainMenu = tk.Menu(self.toolbar, tearoff=False)
         self.toolbar.add_cascade(label='Main', menu=self.mainMenu)
@@ -64,7 +72,7 @@ class App:
         self.mainMenu.add_command(label='Check for updates',
                                   command=web.checkForUpdates)
         self.mainMenu.add_separator()
-        self.mainMenu.add_command(label='Exit', command=window.destroy)
+        self.mainMenu.add_command(label='Exit', command=self.root.destroy)
 
         self.vaMenu = tk.Menu(self.toolbar, tearoff=False)
         self.toolbar.add_cascade(label='Virtual Airlines', menu=self.vaMenu)
@@ -79,14 +87,26 @@ class App:
                                   command=self.connectionTest)
         self.helpMenu.add_command(label='Wiki', command=self.openWiki)
 
+    def home(self):
+        self.title.grid_forget()
+        self.root.grid_rowconfigure(0, weight=0)
+        self.root.grid_rowconfigure(2, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_columnconfigure(2, weight=1)
+
+        self.img = ImageTk.PhotoImage(Image.open("images/estafeta_red.png"))
+        self.banner = tk.Label(self.root, image = self.img)
+        self.banner.grid(row=0, column=1)
+
     def login(self):
         self.loginFrame = tk.Frame(self.root)
-        self.loginFrame.grid(row=6, column=6)
+        self.loginFrame.grid(row=1, column=1)
 
         self.field1 = tk.Label(self.loginFrame, text='Airline: ')
         self.field1.grid(row=0, column=0)
 
-        self.optionMenu = ttk.OptionMenu(self.loginFrame, self.airline, *self.List)
+        self.optionMenu = ttk.OptionMenu(
+            self.loginFrame, self.airline, *self.List)
         self.optionMenu.grid(row=0, column=1)
 
         self.label1 = tk.Label(self.loginFrame, text='Username: ')
@@ -97,25 +117,39 @@ class App:
 
         self.label2 = tk.Label(self.loginFrame, text='API Key: ')
         self.label2.grid(row=2, column=0)
-        
+
         self.txtBox2 = ttk.Entry(self.loginFrame, show="*", textvariable=self.key,
-                  text=self.key)
+                                text=self.key)
         self.txtBox2.grid(row=2, column=1)
 
-        self.autofill = ttk.Button(self.loginFrame, text="Autofill",
-                   command=Login.autofill)
-        self.autofill.grid(row=2, column=2)
+        self.autofillBtn = ttk.Button(self.loginFrame, text="Autofill",
+                                command=self.autofill)
+        self.autofillBtn.grid(row=2, column=2)
 
         ttk.Button(self.loginFrame, text="Autofill",
-                   command=Login.autofillUsername).grid(row=1, column=2)
-        ttk.Button(self.loginFrame, text='Log In', command=Login.terminate).grid(
+                command=self.autofillUsername).grid(row=1, column=2)
+        ttk.Button(self.loginFrame, text='Log In', command=self.doLogin).grid(
             row=3, columnspan=3, sticky="we")
 
-        # Run login function
-        #Log('#######################################################')
-        #Log("Logging in...")
+    '''
+    Run Login function
+    '''
+
+    def doLogin(self):
+        # Log('#######################################################')
+        # Log("Logging in...")
+        # Log("Signed in with " + config.airline)
         Login.login(self.airline, self.username, self.key)
-        #Log("Signed in with " + config.airline)
+
+    def autofill(self):
+        index = self.List.index(self.airline.get())
+        self.key.set(self.savedAPIKeys[index])
+        return
+
+    def autofillUsername(self):
+        index = self.List.index(self.airline.get())
+        self.username.set(self.usernames[index])
+        return
 
     def about(self):
         self.frame1 = tk.Frame(self.root)
@@ -368,8 +402,8 @@ class App:
 
         if addComment == 1:
             data = {"comment": str(comment.get()), }
-            data = json.dumps(data)
-            data = web.post(config.website + '/api/pireps/' +
+            data=json.dumps(data)
+            data=web.post(config.website + '/api/pireps/' +
                             pirepID + '/comments', data)
 
         f.config(state="disabled")
@@ -397,7 +431,8 @@ class App:
         a = ttk.Button(window, text='Select Bid',
                     command=setupFlight, state="disabled")
         a.grid(row=2, column=0, sticky='wens')
-        b = ttk.Button(window, text='Pre-File', command=preFile, state="disabled")
+        b = ttk.Button(window, text='Pre-File',
+                       command=preFile, state="disabled")
         b.grid(row=3, column=0, sticky='wens')
         c = ttk.Button(window, text='Start Flight',
                     command=startFlight, state="disabled")
@@ -439,5 +474,7 @@ class App:
 
 # Main loop
 window = tk.Tk()
-app = App(window)
+App(window)
+window.grid_rowconfigure(0, weight=1)
+window.grid_columnconfigure(0, weight=1)
 window.mainloop()
