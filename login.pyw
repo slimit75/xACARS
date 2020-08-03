@@ -23,11 +23,13 @@ usernames = config.usernames
 
 def login(airline, username, key):
     try:
-        airline.set("None")
-        index = List.index(airline)
+        getAirline = airline.get()
+        getKey = key.get()
+        getUsername = username.get()
+        index = List.index(getAirline)
 
-        config.changeVar("APIKey", key)
-        config.changeVar("airline", airline)
+        config.changeVar("APIKey", getKey)
+        config.changeVar("airline", getAirline)
         config.changeVar("website", websites[index])
 
         data = web.getRaw(config.website + '/api/user')
@@ -35,13 +37,11 @@ def login(airline, username, key):
         if str(data) == "<Response [200]>":
             data = json.loads(data.text)
             data = data["data"]["name"]
-            if username == data:
-                # window.quit()
-                print("Logged in")
+            if getUsername == data:
+                return True
             else:
                 tk.messagebox.showerror(
-                    "xACARS Critical Error", "Error: Invalid API Key or API Key does not match username.")
-                return
+                    "xACARS Critical Error", "Invalid API Key or API Key does not match username.")
         elif str(data) == "<Response [401]>":
             tk.messagebox.showerror(
                 "xACARS Critical Error", "Invalid API Key or API Key does not match username.")
@@ -59,7 +59,10 @@ def login(airline, username, key):
             else:
                 tk.messagebox.showerror(
                     "xACARS Critical Error", "Error when logging in: " + str(data))
-            return
-    except Exception:
-        listAirlines.reload()
+        return False
+    except Exception as e:
+        tk.messagebox.showerror(e)
+        return False
+
+def register(airline, username, website, key):
     return

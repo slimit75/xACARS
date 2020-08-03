@@ -174,7 +174,8 @@ class App:
         # Log('#######################################################')
         # Log("Logging in...")
         # Log("Signed in with " + config.airline)
-        Login.login(self.airline, self.username, self.key)
+        if (Login.login(self.airline, self.username, self.key)):
+            self.dashboard()
 
     def doRegister(self):
         Login.register(self.airline, self.website, self.username, self.key)
@@ -220,6 +221,10 @@ class App:
         self.link1.bind("<Enter>", lambda event, h=self.link1: self.link1.config(fg="#de3b40"))
         self.link1.bind("<Leave>", lambda event, h=self.link1: self.link1.config(fg="#CC2229"))
         self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
+
+    def dashboard(self):
+        self.loginFrame.grid_forget()
+
 
     def about(self):
         self.frame1 = tk.Frame(self.root)
