@@ -1,6 +1,7 @@
 # ----------------------------------------- #
 # login.pyw                                 #
 # Speed_Limit75                             #
+# Additional contributions by Henry Shires  #
 #                                           #
 # As the name suggests, this file manages   #
 # logging into the virtual airline.         #

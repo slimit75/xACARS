@@ -1,6 +1,7 @@
 # ----------------------------------------- #
 # main.pyw                                  #
 # Speed_Limit75                             #
+# Additional contributions by Henry Shires  #
 #                                           #
 # This file runs the main window, and       #
 # getBid.pyw will move here in the future.  #
@@ -8,6 +9,7 @@
 
 # Import libarys
 import tkinter as tk
+import tkinter.font as tkFont
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
@@ -37,14 +39,27 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.config(menu=self.menu())
-        self.root.iconbitmap('Favicon.ico')
+        self.root.iconbitmap('images/Favicon.ico')
         self.root.title('xACARS - ' + config.version)
         self.root.geometry("960x480")
+
+        '''
+        background = Image.open('images/background-main.png')
+        self.bg = ImageTk.PhotoImage(background)
+        self.background = tk.Label(self.root, image=self.bg)
+        self.background.place(x=0, y=0, relwidth=1, relheight=1)
+        '''
+
+        # Frames
+        self.loginFrame = tk.Frame(self.root)
+        self.registerFrame = tk.Frame(self.root)
+        self.body = tk.Frame(self.root)
 
         # Variables
         self.airline = tk.StringVar(self.root)
         self.username = tk.StringVar(self.root)
         self.key = tk.StringVar(self.root)
+        self.website = tk.StringVar(self.root)
 
         self.List = config.list
         self.websites = config.websites
@@ -53,8 +68,14 @@ class App:
 
         self.flightTime = 0
 
+        # Tkinter Styles
+        self.h1 = tkFont.Font(family="Verdana", size=20)
+        self.h2 = tkFont.Font(family="Verdana", size=18)
+        self.h3 = tkFont.Font(family="Verdana", size=14)
+
+        self.style = ttk.Style()
+
         # Widgets
-        self.home()
         self.login()
 
     def menu(self):
@@ -87,49 +108,63 @@ class App:
                                   command=self.connectionTest)
         self.helpMenu.add_command(label='Wiki', command=self.openWiki)
 
-    def home(self):
+    '''
+    Main Menu (Login)
+    '''
+
+    def login(self):
+        # Hide other components
         self.title.grid_forget()
+        self.registerFrame.grid_forget()
+
+        self.body.grid(row=0, column=1)
+
         self.root.grid_rowconfigure(0, weight=0)
         self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(2, weight=1)
 
-        self.img = ImageTk.PhotoImage(Image.open("images/estafeta_red.png"))
-        self.banner = tk.Label(self.root, image = self.img)
+        img = Image.open("images/estafeta_red.png")
+        img = img.resize((int(img.size[0] * 0.75), int(img.size[1] * 0.75)))
+
+        self.img = ImageTk.PhotoImage(img)
+        self.banner = tk.Label(self.body, image=self.img)
         self.banner.grid(row=0, column=1)
 
-    def login(self):
-        self.loginFrame = tk.Frame(self.root)
-        self.loginFrame.grid(row=1, column=1)
+        self.headerLbl = tk.Label(self.body, text="xACARS - Estafeta Edition",
+                              font=self.h1)
+        self.headerLbl.grid(row=1, column=1, pady=20)
 
-        self.field1 = tk.Label(self.loginFrame, text='Airline: ')
-        self.field1.grid(row=0, column=0)
+        self.loginFrame.grid(row=2, column=1)
+        self.loginFrame.grid_rowconfigure(0, weight=0)
+        self.loginFrame.grid_rowconfigure(2, weight=1)
+        self.loginFrame.grid_columnconfigure(0, weight=1)
+        self.loginFrame.grid_columnconfigure(2, weight=1)
 
-        self.optionMenu = ttk.OptionMenu(
-            self.loginFrame, self.airline, *self.List)
-        self.optionMenu.grid(row=0, column=1)
+        tk.Label(self.loginFrame, text="Select Airline").grid(row=0, column=1, sticky="w", pady=5)
+        ttk.OptionMenu(self.loginFrame, self.airline, *self.List).grid(row=0, column=1, pady=5)
 
-        self.label1 = tk.Label(self.loginFrame, text='Username: ')
-        self.label1.grid(row=1, column=0)
+        ttk.Entry(self.loginFrame, textvariable=self.username, width=64).grid(row=1, column=1)
+        tk.Label(self.loginFrame, text="Username").grid(row=2, column=1, sticky="w", pady=(0, 5))
 
-        self.txtBox = ttk.Entry(self.loginFrame, textvariable=self.username)
-        self.txtBox.grid(row=1, column=1)
+        ttk.Entry(self.loginFrame, show="*", textvariable=self.key, width=64).grid(row=3, column=1)
+        tk.Label(self.loginFrame, text="API Key").grid(row=4, column=1, sticky="w", pady=(0, 5))
 
-        self.label2 = tk.Label(self.loginFrame, text='API Key: ')
-        self.label2.grid(row=2, column=0)
-
-        self.txtBox2 = ttk.Entry(self.loginFrame, show="*", textvariable=self.key,
-                                text=self.key)
-        self.txtBox2.grid(row=2, column=1)
-
+        '''
         self.autofillBtn = ttk.Button(self.loginFrame, text="Autofill",
                                 command=self.autofill)
         self.autofillBtn.grid(row=2, column=2)
+        '''
+        self.registerLink = tk.Label(self.loginFrame, text='New to xACARS? Add an account', fg="#CC2229")
+        self.registerLink.grid(row=5, column=1, sticky="w", pady=10)
+        self.registerLink.bind("<Enter>", lambda event, h=self.registerLink: self.registerLink.config(fg="#de3b40"))
+        self.registerLink.bind("<Leave>", lambda event, h=self.registerLink: self.registerLink.config(fg="#CC2229"))
+        self.registerLink.bind("<Button-1>", lambda e, h=self.registerLink: self.register())
 
-        ttk.Button(self.loginFrame, text="Autofill",
-                command=self.autofillUsername).grid(row=1, column=2)
-        ttk.Button(self.loginFrame, text='Log In', command=self.doLogin).grid(
-            row=3, columnspan=3, sticky="we")
+        self.loginButton = tk.Button(self.loginFrame, text='Log In', command=self.doLogin, bg="#CC2229", fg='white', borderwidth=0, width=20, height=2)
+        self.loginButton.grid(row=5, column=1, sticky="e", pady=10)
+        self.loginButton.bind("<Enter>", lambda event, h=self.loginButton: self.loginButton.config(bg="#de3b40"))
+        self.loginButton.bind("<Leave>", lambda event, h=self.loginButton: self.loginButton.config(bg="#CC2229"))
 
     '''
     Run Login function
@@ -141,15 +176,50 @@ class App:
         # Log("Signed in with " + config.airline)
         Login.login(self.airline, self.username, self.key)
 
+    def doRegister(self):
+        Login.register(self.airline, self.website, self.username, self.key)
+
     def autofill(self):
         index = self.List.index(self.airline.get())
         self.key.set(self.savedAPIKeys[index])
         return
 
-    def autofillUsername(self):
-        index = self.List.index(self.airline.get())
-        self.username.set(self.usernames[index])
-        return
+    '''
+        def autofillUsername(self):
+            index = self.List.index(self.airline.get())
+            self.username.set(self.usernames[index])
+            return
+    '''
+
+    def register(self):
+        self.loginFrame.grid_forget()
+
+        self.registerFrame.grid(row=2, column=1)
+        self.headerLbl.config(text="xACARS - Register")
+        self.headerLbl.grid(row=1, column=1, pady=10)
+
+        ttk.Entry(self.registerFrame, textvariable=self.airline, width=64).grid(row=3, column=1)
+        tk.Label(self.registerFrame, text="Airline Name").grid(row=4, column=1, sticky="w", pady=(0, 5))
+
+        ttk.Entry(self.registerFrame, width=64).grid(row=5, column=1)
+        tk.Label(self.registerFrame, text="Airline Website (Format: https://myva.com - no slash at the end)").grid(row=6, column=1, sticky="w", pady=(0, 5))
+
+        ttk.Entry(self.registerFrame, textvariable=self.username, width=64).grid(row=7, column=1)
+        tk.Label(self.registerFrame, text="Username from phpVMS (Must be EXACT)").grid(row=8, column=1, sticky="w", pady=(0, 5))
+
+        ttk.Entry(self.registerFrame, show="*", textvariable=self.key, width=64).grid(row=9, column=1)
+        tk.Label(self.registerFrame, text="API Key").grid(row=10, column=1, sticky="w")
+
+        self.registerButton = tk.Button(self.registerFrame, text='Add Account', command=self.doRegister, bg="#CC2229", fg='white', borderwidth=0, width=20, height=2)
+        self.registerButton.grid(row=11, column=1, sticky="e", pady=10)
+        self.registerButton.bind("<Enter>", lambda event, h=self.registerButton: self.registerButton.config(bg="#de3b40"))
+        self.registerButton.bind("<Leave>", lambda event, h=self.registerButton: self.registerButton.config(bg="#CC2229"))
+
+        self.link1 = tk.Label(self.registerFrame, text='Back', fg="#CC2229")
+        self.link1.grid(row=11, column=1, sticky="w", pady=10)
+        self.link1.bind("<Enter>", lambda event, h=self.link1: self.link1.config(fg="#de3b40"))
+        self.link1.bind("<Leave>", lambda event, h=self.link1: self.link1.config(fg="#CC2229"))
+        self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
 
     def about(self):
         self.frame1 = tk.Frame(self.root)
@@ -158,7 +228,7 @@ class App:
                                font="Arial")
         self.header.grid(row=0, column=0)
         self.bio = tk.Label(
-            self.frame1, text="xACARS was developed by Speed_Limit75 - This version is a fork development by Henry Shires.")
+            self.frame1, text="xACARS was developed by Speed_Limit75 - This version includes additional developments by Henry Shires.")
         self.bio.grid(
             row=1, column=0)
         self.space1 = ttk.Separator(self.frame1, orient=tk.HORIZONTAL)
@@ -402,8 +472,8 @@ class App:
 
         if addComment == 1:
             data = {"comment": str(comment.get()), }
-            data=json.dumps(data)
-            data=web.post(config.website + '/api/pireps/' +
+            data = json.dumps(data)
+            data = web.post(config.website + '/api/pireps/' +
                             pirepID + '/comments', data)
 
         f.config(state="disabled")

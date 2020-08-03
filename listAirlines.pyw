@@ -260,7 +260,6 @@ def edit():
     List = configLib.list
 
     editAirWindow = tk.Tk()
-    editAirWindow.iconbitmap('Favicon.ico')
     airline = tk.StringVar(editAirWindow)
     name = tk.StringVar(editAirWindow)
     url = tk.StringVar(editAirWindow)
@@ -298,7 +297,6 @@ def quit():
 def reload():
     global window
     window = tk.Tk()
-    window.iconbitmap('Favicon.ico')
 
     configLib.reloadList()
 
