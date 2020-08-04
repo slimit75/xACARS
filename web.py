@@ -10,6 +10,7 @@
 
 # Import libarys
 import requests
+import webbrowser
 import config
 
 # Define functions
@@ -34,9 +35,12 @@ def post(website, datax): # For future use
     except Exception as e:
         return str(e)
 
-def checkForUpdates():
+def isLatestVersion():
     data = requests.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json').json()
     return config.getPreRel == True and (str(data["latestBeta"]) == config.version or str(data["latestStable"]) == config.version)
 
 def delete(x): # For future use
-    return 
+    return
+
+def openWiki():
+    webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")

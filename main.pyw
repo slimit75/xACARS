@@ -17,7 +17,6 @@ import json
 import time
 import urllib.request as urllib
 import os
-import webbrowser
 
 # Import local files
 import config
@@ -27,33 +26,27 @@ import track
 import posUpdateLoop
 import listAirlines
 import settings as settingsWindow
-import getBid
 
 '''
 Draw xACARS UI
 '''
 
-
 class App:
 
     def __init__(self, root):
         self.root = root
-        self.root.config(menu=self.menu())
         self.root.iconbitmap('images/Favicon.ico')
         self.root.title('xACARS - ' + config.version)
         self.root.geometry("960x480")
-
-        '''
-        background = Image.open('images/background-main.png')
-        self.bg = ImageTk.PhotoImage(background)
-        self.background = tk.Label(self.root, image=self.bg)
-        self.background.place(x=0, y=0, relwidth=1, relheight=1)
-        '''
 
         # Frames
         self.loginFrame = tk.Frame(self.root)
         self.registerFrame = tk.Frame(self.root)
         self.body = tk.Frame(self.root)
+        self.dbHeader = tk.Frame(self.root)
+        self.dbBody = tk.Frame(self.root)
+        self.buttonGroup = tk.Frame(self.root)
+        self.bidsFrame = tk.Frame(self.root)
 
         # Variables
         self.airline = tk.StringVar(self.root)
@@ -67,6 +60,9 @@ class App:
         self.usernames = config.usernames
 
         self.flightTime = 0
+        self.bidList = []
+        self.selBid = ""
+        self.data = None
 
         # Tkinter Styles
         self.h1 = tkFont.Font(family="Verdana", size=20)
@@ -74,47 +70,45 @@ class App:
         self.h3 = tkFont.Font(family="Verdana", size=14)
 
         self.style = ttk.Style()
+        self.style.configure("TButton", padding=5)
+
+        # Images
+        img = Image.open("images/estafeta_red.png")
+        img = img.resize((int(img.size[0] * 0.75), int(img.size[1] * 0.75)))
+
+        img2 = img.resize((int(img.size[0] * 0.5), int(img.size[1] * 0.5)))
+
+        self.img = ImageTk.PhotoImage(img)
+        self.img2 = ImageTk.PhotoImage(img2)
 
         # Widgets
         self.login()
 
     def menu(self):
-        # Header
-        self.title = tk.Label(self.root, text="Welcome to xACARS",
-                              font="Arial")
-        self.title.grid(row=2, column=0)
-
         # Toolbar
         self.toolbar = tk.Menu(self.root)
+        self.root.config(menu=self.toolbar)
 
         self.mainMenu = tk.Menu(self.toolbar, tearoff=False)
         self.toolbar.add_cascade(label='Main', menu=self.mainMenu)
         self.mainMenu.add_command(label='Preferences', command=self.settings)
         self.mainMenu.add_command(label='Check for updates',
-                                  command=web.checkForUpdates)
+                                  command=self.doCheckForUpdates)
         self.mainMenu.add_separator()
         self.mainMenu.add_command(label='Exit', command=self.root.destroy)
-
-        self.vaMenu = tk.Menu(self.toolbar, tearoff=False)
-        self.toolbar.add_cascade(label='Virtual Airlines', menu=self.vaMenu)
-        self.vaMenu.add_command(label='Login', command=self.login)
-        self.vaMenu.add_command(
-            label='List, Edit & Add Airlines', command=self.editAirlines)
 
         self.helpMenu = tk.Menu(self.toolbar, tearoff=False)
         self.toolbar.add_cascade(label='Help', menu=self.helpMenu)
         self.helpMenu.add_command(label='About xACARS', command=self.about)
         self.helpMenu.add_command(label='Simulator Connection Test',
                                   command=self.connectionTest)
-        self.helpMenu.add_command(label='Wiki', command=self.openWiki)
+        self.helpMenu.add_command(label='Wiki', command=web.openWiki)
 
-    '''
+    """
     Main Menu (Login)
-    '''
-
+    """
     def login(self):
         # Hide other components
-        self.title.grid_forget()
         self.registerFrame.grid_forget()
 
         self.body.grid(row=0, column=1)
@@ -124,10 +118,6 @@ class App:
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(2, weight=1)
 
-        img = Image.open("images/estafeta_red.png")
-        img = img.resize((int(img.size[0] * 0.75), int(img.size[1] * 0.75)))
-
-        self.img = ImageTk.PhotoImage(img)
         self.banner = tk.Label(self.body, image=self.img)
         self.banner.grid(row=0, column=1)
 
@@ -166,32 +156,6 @@ class App:
         self.loginButton.bind("<Enter>", lambda event, h=self.loginButton: self.loginButton.config(bg="#de3b40"))
         self.loginButton.bind("<Leave>", lambda event, h=self.loginButton: self.loginButton.config(bg="#CC2229"))
 
-    '''
-    Run Login function
-    '''
-
-    def doLogin(self):
-        # Log('#######################################################')
-        # Log("Logging in...")
-        # Log("Signed in with " + config.airline)
-        if (Login.login(self.airline, self.username, self.key)):
-            self.dashboard()
-
-    def doRegister(self):
-        Login.register(self.airline, self.website, self.username, self.key)
-
-    def autofill(self):
-        index = self.List.index(self.airline.get())
-        self.key.set(self.savedAPIKeys[index])
-        return
-
-    '''
-        def autofillUsername(self):
-            index = self.List.index(self.airline.get())
-            self.username.set(self.usernames[index])
-            return
-    '''
-
     def register(self):
         self.loginFrame.grid_forget()
 
@@ -223,82 +187,90 @@ class App:
         self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
 
     def dashboard(self):
+        self.body.grid_forget()
         self.loginFrame.grid_forget()
 
+        self.menu()
+
+        self.root.grid_rowconfigure(0, weight=0)
+        self.root.grid_rowconfigure(2, weight=0)
+        self.root.grid_columnconfigure(0, weight=0)
+        self.root.grid_columnconfigure(2, weight=0)
+        
+        self.dbHeader.grid(row=0, column=0)
+        self.dbBody.grid(row=0, column=1)
+        tk.Label(self.dbHeader, image=self.img2).grid(row=0, column=0, pady=5)
+
+        # Button Grid
+        self.style.configure("TButton", padding=20)
+
+        self.bidBtn = ttk.Button(self.dbHeader, text='Select Bid',
+                    command=self.setupFlight, state="enabled").grid(row=2, column=0, sticky='wens')
+        self.prefileBtn = ttk.Button(self.dbHeader, text='Pre-File',
+                       command=self.preFile, state="disabled").grid(row=3, column=0, sticky='wens')
+        self.startBtn = ttk.Button(self.dbHeader, text='Start Flight',
+                    command=self.startFlight, state="disabled").grid(row=4, column=0, sticky='wens')
+        self.updateBtn = ttk.Button(self.dbHeader, text='Update Enroute Time',
+                    command=self.updateEnrouteTime, state="disabled").grid(row=5, column=0, sticky='wens')
+        self.finishBtn = ttk.Button(self.dbHeader, text='Finish Flight',
+                    command=self.finishFlight, state="disabled").grid(row=6, column=0, sticky='wens')
+        self.fileBtn = ttk.Button(self.dbHeader, text='File PIREP',
+                    command=self.filePirep, state="disabled").grid(row=7, column=0, sticky='wens')
+
+        self.dbBody.grid_rowconfigure(0, weight=0)
+        self.dbBody.grid_rowconfigure(2, weight=1)
+        self.dbBody.grid_columnconfigure(0, weight=1)
+        self.dbBody.grid_columnconfigure(2, weight=1)
+
+        # tk.Label(self.dbBody, text="Welcome to xACARS\nEstafeta Edition by Henry Shires", font=self.h1).grid(row=0, column=0)
+        self.log = tk.Listbox(self.dbBody)
+        self.log.grid(row=2, column=0, sticky="n")
+
+        self.Log('View ACARS output here')
+        self.log.grid(row=0, column=1)
+
+        if config.checkUpdate == True:
+            self.doCheckForUpdates()
 
     def about(self):
-        self.frame1 = tk.Frame(self.root)
-        self.frame1.grid(row=6, column=6)
-        self.header = tk.Label(self.frame1, text="xACARS " + config.version,
+        self.dbBody.grid_forget()
+
+        self.aboutFrame = tk.Frame(self.root)
+        self.aboutFrame.grid(row=6, column=6)
+
+        self.header = tk.Label(self.aboutFrame, text="xACARS " + config.version,
                                font="Arial")
         self.header.grid(row=0, column=0)
         self.bio = tk.Label(
-            self.frame1, text="xACARS was developed by Speed_Limit75 - This version includes additional developments by Henry Shires.")
+            self.aboutFrame, text="xACARS was developed by Speed_Limit75 - This version includes additional developments by Henry Shires.")
         self.bio.grid(
             row=1, column=0)
-        self.space1 = ttk.Separator(self.frame1, orient=tk.HORIZONTAL)
+        self.space1 = ttk.Separator(self.aboutFrame, orient=tk.HORIZONTAL)
         self.space1.grid(
             row=2, column=0, sticky="we")
 
         self.text = tk.Label(
-            self.frame1, text="This program is currently in alpha testing, so expect major bugs and issues.")
+            self.aboutFrame, text="This program is currently in alpha testing, so expect major bugs and issues.")
         self.text.grid(
             row=3, column=0, sticky="w")
 
         self.text2 = tk.Label(
-            self.frame1, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.")
+            self.aboutFrame, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.")
         self.text2.grid(row=4, column=0, sticky="w")
-        ttk.Button(self.frame1, text='Close', command=self.hide).grid(
-            row=5, column=0, sticky="we")
-
-    def hide(self):
-        hide = 1
-        if hide == 0:
-            self.frame1.destroy()
-        else:
-            pass
-
-    def connectionTest(self):
-        Log('#######################################################')
-        Log('Attempting to connect to your simulator...')
-        track.endTrack()
-        isSuccess = track.beginTrack()
-        if isSuccess == "Can Connect":
-            Log('Connected to simulator!')
-            track.posUpdate()
-        else:
-            Log('ERROR: Unable to connect.')
-            Log(isSuccess)
-        track.endTrack()
-
-    def editAirlines(self):
-        listAirlines.reload()
-        return
 
     def setupFlight(self):
-        global a
-        global b
-        global data
+        self.data = self.getBids()
 
-        # Get Data
-        data = getBid.draw()
+        self.Log('#######################################################')
+        self.Log("Selected flight: " + str(self.data["flight"]["ident"]))
+        self.Log("Departs from " + str(self.data["flight"]["dpt_airport_id"]) +
+            " and arrives at " + str(self.data["flight"]["arr_airport_id"]))
 
-        Log('#######################################################')
-        Log("Selected flight: " + str(data["flight"]["ident"]))
-        Log("Departs from " + str(data["flight"]["dpt_airport_id"]) +
-            " and arrives at " + str(data["flight"]["arr_airport_id"]))
-        a.config(state="disabled")
-        b.config(state="normal")
-        return
-
-    def settings(self):
-        settingsWindow.drawWindow(window)
-        return
+        self.bidBtn.config(state="disabled")
+        self.prefileBtn.config(state="normal")
 
     def preFile(self):
-        global data
         global pirepID
-        global Log
 
         preFileWindow = tk.Tk()
         cruiseAlt = tk.StringVar(preFileWindow)
@@ -308,7 +280,7 @@ class App:
         selacf = tk.StringVar(preFileWindow)
 
         # Get subfleet from flight information
-        flightId = data["flight_id"]
+        flightId = self.data["flight_id"]
         flightData = json.loads(
             web.get(config.website + '/api/flights/' + flightId))["data"]
 
@@ -327,8 +299,6 @@ class App:
             acf.append(key)
         selacf.set(acf[0])
 
-        preFileWindow.iconbitmap('Favicon.ico')
-        preFileWindow.title('xACARS - Prefile')
         tk.Label(preFileWindow, text="Prefile", font="Arial").grid(
             row=0, column=0, columnspan=3, sticky="w")
         ttk.Separator(preFileWindow, orient=tk.HORIZONTAL).grid(
@@ -390,22 +360,22 @@ class App:
             data = data["data"]
             pirepID = data["id"]
 
-            b.config(state="disabled")
-            c.config(state="normal")
-            d.config(state="normal")
+            #b.config(state="disabled")
+            #c.config(state="normal")
+            #d.config(state="normal")
         except:
             data = data["error"]
-            Log("Error: " + str(data["message"]))
+            self.Log("Error: " + str(data["message"]))
 
     def startFlight(self):
         global pirepID
         global flightTime
         flightTime = int(time.time())
         posUpdateLoop.startLoop(pirepID)
-        Log('#######################################################')
-        Log("Now logging flight.")
-        c.config(state="disabled")
-        e.config(state="normal")
+        self.Log('#######################################################')
+        self.Log("Now logging flight.")
+        # c.config(state="disabled")
+        # e.config(state="normal")
 
     def updateEnrouteTime(self):
         uetWindow = tk.Tk()
@@ -441,7 +411,6 @@ class App:
         fuel = tk.StringVar(fpWindow)
         distance = tk.StringVar(fpWindow)
 
-        fpWindow.iconbitmap('Favicon.ico')
         fpWindow.title('xACARS - File Pirep')
 
         tk.Label(fpWindow, text='File Pirep', font="Arial").grid(sticky="w")
@@ -482,69 +451,109 @@ class App:
                             pirepID + '/comments', data)
 
         f.config(state="disabled")
-        Log('#######################################################')
-        Log("Hope you had a great flight!")
+        self.Log('#######################################################')
+        self.Log("Hope you had a great flight!")
         fpWindow.destroy()
 
     def finishFlight(self):
         posUpdateLoop.stopLoop()
-        f.config(state="normal")
-        d.config(state="disabled")
-        e.config(state="disabled")
+        #f.config(state="normal")
+        #d.config(state="disabled")
+        #e.config(state="disabled")
+
+    def getBids(self):
+        self.bidsFrame.grid()
+        selBid = tk.StringVar(self.root)
+
+        tk.Label(self.dbBody, text='Bids', font="Arial").grid(row=0, columnspan=1, sticky="w") 
+        ttk.Separator(self.dbBody, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
+
+        # Get bids from phpVMS
+        data = web.get(config.website + '/api/user/bids')
+
+        # Check for and list bids
+        if data == '{"data":[]}':
+            tk.Label(self.dbBody, text="No bids found! Please place a bid on your airline's website and restart xACARS.").grid(row=1, column=0)
+        else:
+            bids = json.loads(data)["data"]
+            self.bidList.append(str(bids[0]["flight"]["ident"]) + " (" + str(bids[0]["flight"]["dpt_airport_id"]) + " - " + str(bids[0]["flight"]["arr_airport_id"]) + ")")
+            for key in bids:
+                self.bidList.append(str(key["flight"]["ident"]) + " (" + str(key["flight"]["dpt_airport_id"]) + " - " + str(key["flight"]["arr_airport_id"]) + ")")
+
+            self.bidList.reverse()
+        
+            selBid.set(self.bidList[0])
+            ttk.OptionMenu(window, selBid, *self.bidList).grid(row=2, column=0, sticky="we")
+            ttk.Button(window, text='Select', command=self.bidsFrame.grid_forget).grid(row=2, column=1, sticky="we")
+
+        if data == '{"data":[]}':
+            return "No bids"
+        else:
+            selBid = selBid.get()
+
+            selBidText = selBid.split(" ")
+            selBidText = selBidText[0]
+
+            a = 0
+            for key in bids:
+                if key["flight"]["ident"] == selBidText:
+                    break
+                else:
+                    a = a + 1
+        
+            return bids[a]
+
+    """
+    Run Login function
+    """
+    def doLogin(self):
+        if (Login.login(self.airline, self.username, self.key)):
+            self.dashboard()
+
+    def doRegister(self):
+        Login.register(self.airline, self.website, self.username, self.key)
+
+    """
+    Check if the current version of xACARS is the latest, published version
+    """
+    def doCheckForUpdates(self):
+        if (not(web.isLatestVersion())):
+            tk.messagebox.showinfo("xACARS Update", "Update available! You can download the latest version of xACARS from https://github.com/slimit75/xACARS/releases")
+        else:
+            tk.messagebox.showinfo("xACARS Update", "No updates available")
+
+    def autofill(self):
+        index = self.List.index(self.airline.get())
+        self.key.set(self.savedAPIKeys[index])
+        return
+
+    '''
+        def autofillUsername(self):
+            index = self.List.index(self.airline.get())
+            self.username.set(self.usernames[index])
+            return
+    '''
+
+    def connectionTest(self):
+        track.endTrack()
+        isSuccess = track.beginTrack()
+        if isSuccess == "Can Connect":
+            tk.messagebox.showinfo("xACARS UIPC", "Connected to Sim!")
+            track.posUpdate()
+        else:
+            tk.messagebox.showerror('Error','Unable to connect to sim. ' + isSuccess)
+        track.endTrack()
+
+    def editAirlines(self):
+        listAirlines.reload()
+        return
+
+    def settings(self):
+        settingsWindow.drawWindow(window)
+        return
 
     def Log(self, text):
-        log.insert(tk.END, text)
-
-    def openWiki():
-        webbrowser.open_new_tab("https://github.com/slimit75/xACARS/wiki")
-
-        # Button Grid
-        '''
-        g = ttk.Button(window, text='Login', command=login)
-        g.grid(row=1, column=0, sticky="wens")
-
-        a = ttk.Button(window, text='Select Bid',
-                    command=setupFlight, state="disabled")
-        a.grid(row=2, column=0, sticky='wens')
-        b = ttk.Button(window, text='Pre-File',
-                       command=preFile, state="disabled")
-        b.grid(row=3, column=0, sticky='wens')
-        c = ttk.Button(window, text='Start Flight',
-                    command=startFlight, state="disabled")
-        c.grid(row=4, column=0, sticky='wens')
-        d = ttk.Button(window, text='Update Enroute Time',
-                    command=updateEnrouteTime, state="disabled")
-        d.grid(row=5, column=0, sticky='wens')
-        e = ttk.Button(window, text='Finish Flight',
-                    command=finishFlight, state="disabled")
-        e.grid(row=6, column=0, sticky='wens')
-        f = ttk.Button(window, text='File PIREP',
-                    command=filePirep, state="disabled")
-        f.grid(row=7, column=0, sticky='wens')
-
-        log = tk.Listbox(window, width=55, height=15)
-
-        Log('Welcome to xACARS.')
-        log.grid(row=0, column=1, rowspan=8)
-        Log('Please login.')
-        if config.loginMessage == True:
-                Log('#######################################################')
-                Log("You can log in by going to the 'Virtual Airlines' tab, and")
-                Log("selecting 'Connect to a airline'. If you are new, you can")
-                Log("add a airline by going to the same tab and click 'List, Edit &")
-                Log("Add airlines'.")
-                Log('#######################################################')
-                Log("You can disable this message in settings.")
-
-            if config.checkUpdate == True:
-                Log('#######################################################')
-                Log("Checking for updates..")
-                if (web.checkForUpdates()):
-                    Log("There is a update avalible, please get it from")
-                    Log("https://github.com/slimit75/xACARS/releases")
-                else:
-                    Log("No updates avalible.")
-        '''
+        self.log.insert(tk.END, text)
 
 
 # Main loop
