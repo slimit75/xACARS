@@ -28,10 +28,10 @@ def getRaw(website): # GET request, returns reqest as an object
     except Exception as e:
         return str(e)
 
-def post(website, datax): # For future use
+def post(website, datax): # POST request, returns http response as an object
     try:
-        data = requests.post(website, data = datax, headers={"Content-type":"application/json", "X-API-Key":config.APIKey})
-        return data
+        response = requests.post(website, data = datax, headers={"Content-type":"application/json", "X-API-Key":config.APIKey})
+        return response
     except Exception as e:
         return str(e)
 
