@@ -19,7 +19,7 @@ Please submit ONLY bug reports to this repository's GitHub Issues. Feature reque
 For additional questions, comments or concerns, please email me:
 
 Henry Shires - Webmaster and Systems Manager - Estafeta VA
-(hshires@estafetava.com)[mailto:hshires@estafetava.com]
+(mailto:hshires@estafetava.com)[hshires@estafetava.com]
 
 Thank you for using xACARS!
 Original source code by @slimit_75
