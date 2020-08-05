@@ -651,12 +651,16 @@ class App:
         self.settingsWin.quit()
 
     def restoreToDefaults(self):
+        self.restoreToDefault = False
         self.restoreToDefault = tk.messagebox.askyesno("xACARS","Are you sure you want to restore to defaults?")
+        self.settingsWin.lift()
+
         if self.restoreToDefault == True:
+            print("bye bye")
             os.remove("settings.ini")
             config.reloadIni()
             tk.messagebox.showinfo("xACARS","Restored defaults.")
-            
+
             self.settingsWin.quit()
 
     def Log(self, text):
