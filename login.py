@@ -16,7 +16,7 @@ import web
 import json
 import listAirlines
 
-List = config.list
+List = config.List
 websites = config.websites
 savedAPIKeys = config.savedAPIKeys
 usernames = config.usernames
@@ -41,10 +41,10 @@ def login(airline, username, key):
                 return True
             else:
                 tk.messagebox.showerror(
-                    "xACARS Critical Error", "Invalid API Key or API Key does not match username.")
+                    "xACARS Error", "Invalid API Key or API Key does not match username.")
         elif str(data) == "<Response [401]>":
             tk.messagebox.showerror(
-                "xACARS Critical Error", "Invalid API Key or API Key does not match username.")
+                "xACARS Error", "Invalid API Key or API Key does not match username.")
         else:
             data1 = str(data)
             if data1.startswith("<Response [") == True:
@@ -55,13 +55,13 @@ def login(airline, username, key):
                 data3 = data[13]
                 data = data1 + data2 + data3
                 tk.messagebox.showerror(
-                    "xACARS Critical Error", "HTML Error: " + data)
+                    "xACARS Error", "HTML Error: " + data)
             else:
                 tk.messagebox.showerror(
-                    "xACARS Critical Error", "Error when logging in: " + str(data))
+                    "xACARS Error", "Error when logging in: " + str(data))
         return False
     except Exception as e:
-        tk.messagebox.showerror(e)
+        tk.messagebox.showerror("xACARS Error", e)
         return False
 
 def register(airline, username, website, key):

@@ -25,7 +25,6 @@ import web
 import track
 import posUpdateLoop
 import listAirlines
-import settings as settingsWindow
 
 '''
 Draw xACARS UI
@@ -55,7 +54,7 @@ class App:
         self.key = tk.StringVar(self.root)
         self.website = tk.StringVar(self.root)
 
-        self.List = config.list
+        self.List = config.List
         self.websites = config.websites
         self.savedAPIKeys = config.savedAPIKeys
         self.usernames = config.usernames
@@ -140,7 +139,7 @@ class App:
         self.loginFrame.grid_columnconfigure(2, weight=1)
 
         tk.Label(self.loginFrame, text="Select Airline").grid(row=0, column=1, sticky="w", pady=5)
-        ttk.OptionMenu(self.loginFrame, self.airline, *self.List).grid(row=0, column=1, pady=5)
+        ttk.OptionMenu(self.loginFrame, self.airline, "Select an Airline", *self.List).grid(row=0, column=1, pady=5)
 
         ttk.Entry(self.loginFrame, textvariable=self.username, width=64).grid(row=1, column=1)
         tk.Label(self.loginFrame, text="Username").grid(row=2, column=1, sticky="w", pady=(0, 5))
@@ -548,8 +547,8 @@ class App:
         addComment = self.addComment.get()
         if addComment == 1:
             self.data = {"comment": str(self.comment.get()), }
-            data = json.dumps(self.data)
-            data = web.post(config.website + '/api/pireps/' +
+            self.data = json.dumps(self.data)
+            commentsResponse = web.post(config.website + '/api/pireps/' +
                             self.pirepID + '/comments', self.data)
 
         if response.status_code == 200:
@@ -557,10 +556,15 @@ class App:
             self.bidBtn.config(state="enabled")
             self.Log('#######################################################')
             self.Log("PIREP Submitted! Hope you had a great flight!")
+        elif commentsResponse.status_code != 200:
+            self.Log('#######################################################')
+            self.Log("Error when attempting to add comments")
+            self.Log(commentsResponse.json())
         else:
             self.Log('#######################################################')
             self.Log("Error when attempting to file PIREP")
             self.Log(response.json())
+
 
     def connectionTest(self):
         track.endTrack()
@@ -579,12 +583,84 @@ class App:
         return
 
     def settings(self):
-        settingsWindow.drawWindow(window)
-        return
+        listOfBool = ["", "True", "False"]
+        inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
+
+        self.settingsWin = tk.Tk()
+        self.settingsWin.iconbitmap('images/Favicon.ico')
+
+        config.reloadConfig()
+
+        self.isfsuipc = tk.StringVar(self.settingsWin)
+        if config.useFSUIPC == True:
+            self.isfsuipc.set(str("FSUIPC (FSX & P3D)"))
+        else:
+            self.isfsuipc.set(str("FlyWithLua (X-Plane)"))
+
+        self.darkMode = tk.StringVar(self.settingsWin)
+        self.darkMode.set(str(config.darkMode))
+
+        self.checkUpdate = tk.StringVar(self.settingsWin)
+        self.checkUpdate.set(str(config.checkUpdate))
+
+        self.getPreRel = tk.StringVar(self.settingsWin)
+        self.getPreRel.set(str(config.getPreRel))
+
+        # Draw window
+        self.settingsWin.title('xACARS Settings')
+        tk.Label(self.settingsWin, text='Settings', font="Arial").grid(row=0, columnspan=1, sticky="w") 
+        tk.Label(self.settingsWin, text='Changes require restarting the program.').grid(row=1, columnspan=1, sticky="w")
+        ttk.Separator(self.settingsWin, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
+
+        tk.Label(self.settingsWin, text='Input Method: ').grid(row=3, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.isfsuipc, *inputOptions).grid(row=3, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='This will enable dark mode, in the future.').grid(row=4, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Check for updates on startup: ').grid(row=5, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='Turn this off if you want to manually check for updates.').grid(row=5, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Download pre-release versions: ').grid(row=6, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='This may be unstable.').grid(row=6, column=3, sticky="w")
+
+        ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
+        ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=9, columnspan=4, sticky="we")
+        self.settingsWin.mainloop()
+
+        self.settingsWin.destroy()
+
+    def saveSettings(self):
+        file = open("settings.ini", 'w')
+        file.write("[DEFAULT]\n")
+
+        if self.isfsuipc.get() == "FSUIPC (FSX & P3D)":
+            file.write("fsuipc = True\n")
+        else:
+            file.write("fsuipc = False\n")
+
+        file.write("darkMode = " + self.darkMode.get() + "\n")
+        file.write("checkForUpdatesOnStart = " + self.checkUpdate.get() + "\n")
+        file.write("getPreReleaseVersions = " + self.getPreRel.get() + "\n")
+        file.close()
+
+        self.settingsWin.quit()
+
+    def restoreToDefaults(self):
+        self.restoreToDefault = tk.messagebox.askyesno("xACARS","Are you sure you want to restore to defaults?")
+        if self.restoreToDefault == True:
+            os.remove("settings.ini")
+            config.reloadIni()
+            tk.messagebox.showinfo("xACARS","Restored defaults.")
+            
+            self.settingsWin.quit()
 
     def Log(self, text):
         self.log.insert(tk.END, text)
-
 
 # Main loop
 window = tk.Tk()
