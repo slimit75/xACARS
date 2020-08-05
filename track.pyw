@@ -29,7 +29,7 @@ def endTrack():  # Closes connection to FSUIPC/XPUIPC.
 
 # Write data to a text file in the input folder. Creates file if there is none, and if there is one it overwrites it.
 def writeData(x, y):
-    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', 'w')
+    file = open('input/' + x + '.txt', 'w')
     file.write(str(y))
     file.close()
 
