@@ -241,7 +241,7 @@ class App:
             self.doCheckForUpdates()
 
     def about(self):
-        about = tk.Tk()
+        about = tk.Toplevel()
         about.title('xACARS - About')
         about.iconbitmap('images/Favicon.ico')
 
@@ -269,7 +269,6 @@ class App:
         self.text2.grid(row=4, column=0, sticky="w")
 
         about.mainloop()
-        about.destroy()
 
     def setupFlight(self):
         self.dbBody.grid_forget()
@@ -586,7 +585,7 @@ class App:
         listOfBool = ["", "True", "False"]
         inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
 
-        self.settingsWin = tk.Tk()
+        self.settingsWin = tk.Toplevel()
         self.settingsWin.iconbitmap('images/Favicon.ico')
 
         config.reloadConfig()
@@ -631,8 +630,6 @@ class App:
         ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
         ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=9, columnspan=4, sticky="we")
         self.settingsWin.mainloop()
-
-        self.settingsWin.destroy()
 
     def saveSettings(self):
         file = open("settings.ini", 'w')
