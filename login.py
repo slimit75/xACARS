@@ -15,7 +15,6 @@ import config
 import configparser
 import web
 import json
-import listAirlines
 
 def login(airline, username, key):
     try:
@@ -78,8 +77,70 @@ def register(airline, website, username, apiKey):
         configfile.write("\n\n")
         accounts.write(configfile)
 
-def edit():
-    return
+def edit(airline, website, username, apiKey):
+    getAirline = airline.get()
+    getKey = apiKey.get()
+    getUsername = username.get()
+    getWebsite = website.get()
+    index = config.List.index(airline)
+    
+    airlineFile = configparser.ConfigParser()
 
-def delete():
-    return
+    if apiKey == "":
+        if username == "":
+            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite}
+        else:
+            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'username': getUsername}
+    else:
+        if username == "":
+            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey}
+        else:
+            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername}
+
+    file = open('airlines.ini', 'r')
+    data = file.read()
+    file.close()
+
+    data1 = data.split("[" + str(index + 1) + "]")
+    data2 = data1[1].split("[" + str(index + 2) + "]")
+
+    with open('airlines.ini', 'w') as configfile:
+        configfile.write(data1[0])
+        airlineFile.write(configfile)
+
+        if not index + 2 == len(config.List):
+            configfile.write("[" + str(index + 2) + "]")
+            configfile.write(data2[1])
+        configfile.close()
+
+def delete(airline):
+    airline = airline.get()
+
+    index = config.List.index(airline)
+    
+    airlineFile = configparser.ConfigParser()
+
+    file = open('airlines.ini', 'r')
+    data = file.read()
+    file.close()
+
+    print(str(index + 1))
+    data1 = data.split("[" + str(index) + "]")
+    print(data1[0])
+
+    try:
+        data2 = data1[1].split("[" + str(index + 1) + "]")
+        print(data2[1])
+    except Exception as e:
+        tk.messagebox.showerror("xACARS Error", e)
+        data2 = ["", ""]
+
+    with open('airlines.ini', 'w') as configfile:
+        configfile.write(data1[0])
+        #config.write(configfile)
+
+        if not data2[1] == "":
+            configfile.write("[" + str(index) + "]")
+            configfile.write(data2[1])
+        configfile.close()
+        airlineFile.write(configfile)

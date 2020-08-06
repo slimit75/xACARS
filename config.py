@@ -23,12 +23,13 @@ airline = ""
 website = ""
 APIKey = ""
 
-# Airlines.ini Fields
+# Airlines.ini fields
 List = []
 websites = []
 savedAPIKeys = []
 usernames = []
 
+# Settings fields
 useFSUIPC = False
 darkMode = False
 checkUpdate = False

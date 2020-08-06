@@ -3,8 +3,7 @@
 # Speed_Limit75                             #
 # Additional contributions by Henry Shires  #
 #                                           #
-# This file runs the main window, and       #
-# getBid.pyw will move here in the future.  #
+# This file runs the main window            #
 # ----------------------------------------- #
 
 # Import libarys
@@ -24,7 +23,6 @@ import login as Login
 import web
 import track
 import posUpdateLoop
-import listAirlines
 
 '''
 Draw xACARS UI
