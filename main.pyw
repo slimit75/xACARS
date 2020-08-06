@@ -29,6 +29,7 @@ Draw xACARS UI
 '''
 
 class App:
+    global exportData
 
     def __init__(self, root):
         self.root = root
@@ -108,6 +109,7 @@ class App:
         self.mainMenu.add_command(label='Check for updates',
                                   command=self.doCheckForUpdates)
         self.mainMenu.add_separator()
+        self.mainMenu.add_command(label='Sign Out', command=self.doSignOut)
         self.mainMenu.add_command(label='Exit', command=self.root.destroy)
 
         self.helpMenu = tk.Menu(self.toolbar, tearoff=False)
@@ -123,6 +125,11 @@ class App:
     def login(self):
         # Reload list of airlines
         config.reloadAirlines()
+
+        self.List = config.List
+        self.websites = config.websites
+        self.savedAPIKeys = config.savedAPIKeys
+        self.usernames = config.usernames
 
         # Hide other components
         self.registerFrame.grid_forget()
@@ -200,13 +207,17 @@ class App:
         self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
 
     def accounts(self):
+        config.reloadAirlines()
+
         self.accountsMenu = tk.Toplevel()
         self.accountsMenu.title('xACARS - Manage Accounts')
         self.accountsMenu.iconbitmap('images/Favicon.ico')
         self.accountsMenu.geometry("400x250")
 
+        self.delAirline = tk.StringVar()
+
         tk.Label(self.accountsMenu, text='Airline to edit: ').grid(row=0, column=0)
-        ttk.OptionMenu(self.accountsMenu, self.airline, 0, *self.List).grid(row=0, column=1)
+        ttk.OptionMenu(self.accountsMenu, self.delAirline, 'Select an Airline', *self.List).grid(row=0, column=1)
         tk.Label(self.accountsMenu, text='Airline Name: ').grid(row=1, column=0)
         tk.Label(self.accountsMenu, text='Airline URL: ').grid(row=2, column=0)
         tk.Label(self.accountsMenu, text='Username: ').grid(row=3, column=0)
@@ -561,7 +572,6 @@ class App:
 
     def doRegister(self):
         Login.register(self.airline, self.website, self.username, self.key)
-        self.registerFrame.grid_forget()
         self.login()
 
     def doEdit(self):
@@ -569,8 +579,43 @@ class App:
         self.accountsMenu.destroy()
 
     def doDelete(self):
-        Login.delete(self.airline)
-        self.accountsMenu.destroy()
+        proceed = tk.messagebox.askyesno('xACARS', 'Are you sure you want to delete ' + self.delAirline.get() + ' from xACARS?')
+        if proceed:
+            if not(self.isInFlight()):
+                Login.delete(self.delAirline)
+                
+                if (self.delAirline.get() == self.airline.get()):
+                    self.doSignOut()
+                self.accountsMenu.destroy()
+            else:
+                tk.messagebox.showerror('xACARS Error', 'Unable to delete account. Complete your flight first!')
+
+    def doSignOut(self):
+        self.dbHeader.grid_forget()
+        self.dbBody.grid_forget()
+        self.log.grid_forget()
+        self.bidsFrame.grid_forget()
+        self.prefileFrame.grid_forget()
+        self.fileFrame.grid_forget()
+
+        config.airline = ""
+        config.website = ""
+        config.username = ""
+        config.APIKey = ""
+
+        self.airline.set("")
+        self.website.set("")
+        self.username.set("")
+        self.key.set("")
+        self.rememberMe.set(False)
+
+        # Hide menu
+        emptyMenu = tk.Menu(self.root)
+        self.root.config(menu=emptyMenu)
+
+        config.forgetUsers()
+
+        self.login()
 
     """
     Check if the current version of xACARS is the latest, published version
@@ -650,6 +695,8 @@ class App:
             self.bidBtn.config(state="enabled")
             self.Log('#######################################################')
             self.Log("PIREP Submitted! Hope you had a great flight!")
+            self.fileFrame.grid_forget()
+            self.dbBody.grid()
         elif commentsResponse.status_code != 200:
             self.Log('#######################################################')
             self.Log("Error when attempting to add comments")
@@ -670,6 +717,13 @@ class App:
             tk.messagebox.showerror('xACARS Error','Unable to connect to sim. ' + isSuccess)
             return False
         track.endTrack()
+
+    def isInFlight(self):
+        try:
+            return self.prefileFrame.winfo_ismapped() or self.fileFrame.winfo_ismapped() or self.startBtn.cget('state') == "active" or self.finishBtn.cget('state') == "active"
+        except Exception as e:
+            tk.messagebox.showerror('xACARS Error', e)
+            return False
 
     def saveSettings(self):
         file = open("settings.ini", 'w')
@@ -693,7 +747,6 @@ class App:
         self.settingsWin.lift()
 
         if self.restoreToDefault == True:
-            print("bye bye")
             os.remove("settings.ini")
             config.reloadIni()
             tk.messagebox.showinfo("xACARS","Restored defaults.")
@@ -705,7 +758,8 @@ class App:
 
 # Main loop
 window = tk.Tk()
-App(window)
+app = App(window)
+
 window.grid_rowconfigure(0, weight=1)
 window.grid_columnconfigure(0, weight=1)
 window.mainloop()

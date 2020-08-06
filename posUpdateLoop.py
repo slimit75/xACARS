@@ -17,6 +17,9 @@ import web
 import config
 import os
 
+import tkinter as tk
+from tkinter import messagebox
+
 # Set variables
 stop = False
 pirepID = ""
@@ -44,10 +47,8 @@ def loop():
             exportdata = json.dumps(exportdata)
             
             web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)
-
-            print(exportdata)
         except Exception as e:
-            print(e)
+            tk.messagebox.showerror("xACARS Error - Update Loop", e)
 
         time.sleep(5)
 

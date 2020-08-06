@@ -152,6 +152,21 @@ def rememberUser():
         tk.messagebox.showerror("xACARS Error", e)
         return False
 
+def forgetUsers():
+    config = configparser.ConfigParser()
+    config.read("airlines.ini")
+    configSections = config.sections()
+
+    try:
+        for key in configSections:
+            config[key]["rememberMe"] = "False"
+
+        with open('airlines.ini', 'w') as configfile:
+            config.write(configfile)
+
+    except Exception as e:
+        tk.messagebox.showerror("xACARS Error", e)
+        return False
 
 reloadIni()
 reloadAirlines()
