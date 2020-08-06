@@ -22,6 +22,7 @@ version = "v1.0.0-alpha2"
 airline = ""
 website = ""
 APIKey = ""
+username = ""
 
 # Airlines.ini fields
 List = []
@@ -48,6 +49,9 @@ def changeVar(x, y):
         y.replace(" ", "")
         y = y.strip()
         APIKey = y
+    elif x == "rememberMe":
+        global rememberMe
+        rememberMe = y
 
 # Converts a string to a boolean. Used by no external files
 def stringToBool(x):
@@ -111,6 +115,8 @@ def reloadIni():
         file.write("name=\n")
         file.write("url=\n")
         file.write("apikey=None Saved\n")
+        file.write("rememberMe=False\n")
+
         file.close()
 
     if os.path.exists('settings.ini') == False:
@@ -121,6 +127,31 @@ def reloadIni():
         file.write("checkForUpdatesOnStart = True\n")
         file.write("getPreReleaseVersions = False\n")
         file.close()
+
+def rememberUser():
+    global airline
+    global website
+    global APIKey
+    global username
+
+    config = configparser.ConfigParser()
+    config.read("airlines.ini")
+    configSections = config.sections()
+
+    try:
+        for key in configSections:
+            if (stringToBool(config[key]["rememberMe"])):
+                airline = config[key]['name']
+                website = config[key]['URL']
+                APIKey = config[key]['apikey']
+                username = config[key]['username']
+                return True
+        return False
+
+    except Exception as e:
+        tk.messagebox.showerror("xACARS Error", e)
+        return False
+
 
 reloadIni()
 reloadAirlines()

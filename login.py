@@ -16,12 +16,12 @@ import configparser
 import web
 import json
 
-def login(airline, username, key):
+def login(airline, username, key, rememberMe):
     try:
-
         getAirline = airline.get()
         getKey = key.get()
         getUsername = username.get()
+        getRememberMe = rememberMe.get()
         index = config.List.index(getAirline)
 
         config.changeVar("APIKey", getKey)
@@ -34,6 +34,13 @@ def login(airline, username, key):
             data = json.loads(data.text)
             data = data["data"]["name"]
             if getUsername == data:
+                if getRememberMe:
+                    parser = configparser.ConfigParser()
+                    parser.read("airlines.ini")
+                    parser.set(str(index + 1), "rememberMe", "True")
+
+                    with open('airlines.ini', 'w') as configfile:
+                        parser.write(configfile)
                 return True
             else:
                 tk.messagebox.showerror(
@@ -71,7 +78,7 @@ def register(airline, website, username, apiKey):
         index += 1
 
     accounts = configparser.ConfigParser()
-    accounts[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername}
+    accounts[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername, 'rememberMe': False}
 
     with open('airlines.ini', 'a') as configfile:
         configfile.write("\n\n")
@@ -86,16 +93,7 @@ def edit(airline, website, username, apiKey):
     
     airlineFile = configparser.ConfigParser()
 
-    if apiKey == "":
-        if username == "":
-            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite}
-        else:
-            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'username': getUsername}
-    else:
-        if username == "":
-            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey}
-        else:
-            airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername}
+    airlineFile[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername}
 
     file = open('airlines.ini', 'r')
     data = file.read()

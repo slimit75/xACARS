@@ -51,6 +51,12 @@ class App:
         self.username = tk.StringVar(self.root)
         self.key = tk.StringVar(self.root)
         self.website = tk.StringVar(self.root)
+        self.rememberMe = tk.BooleanVar(self.root)
+
+        self.List = config.List
+        self.websites = config.websites
+        self.savedAPIKeys = config.savedAPIKeys
+        self.usernames = config.usernames
 
         self.pirepID = None
         self.data = None
@@ -79,7 +85,16 @@ class App:
         self.img2 = ImageTk.PhotoImage(img2)
 
         # Widgets
-        self.login()
+        if (config.rememberUser()):
+            self.airline.set(config.airline)
+            self.website.set(config.website)
+            self.key.set(config.APIKey)
+            self.username.set(config.username)
+            self.rememberMe.set(True)
+
+            self.doLogin()
+        else:
+            self.login()
 
     def menu(self):
         # Toolbar
@@ -108,11 +123,6 @@ class App:
     def login(self):
         # Reload list of airlines
         config.reloadAirlines()
-
-        self.List = config.List
-        self.websites = config.websites
-        self.savedAPIKeys = config.savedAPIKeys
-        self.usernames = config.usernames
 
         # Hide other components
         self.registerFrame.grid_forget()
@@ -146,14 +156,16 @@ class App:
         ttk.Entry(self.loginFrame, show="*", textvariable=self.key, width=64).grid(row=3, column=1)
         tk.Label(self.loginFrame, text="API Key").grid(row=4, column=1, sticky="w", pady=(0, 5))
 
+        ttk.Checkbutton(self.loginFrame, text="Log in automatically", variable=self.rememberMe).grid(row=5, column=1, sticky="w")
+
         self.registerLink = tk.Label(self.loginFrame, text='New to xACARS? Add an account', fg="#CC2229")
-        self.registerLink.grid(row=5, column=1, sticky="w", pady=10)
+        self.registerLink.grid(row=6, column=1, sticky="w", pady=10)
         self.registerLink.bind("<Enter>", lambda event, h=self.registerLink: self.registerLink.config(fg="#de3b40"))
         self.registerLink.bind("<Leave>", lambda event, h=self.registerLink: self.registerLink.config(fg="#CC2229"))
         self.registerLink.bind("<Button-1>", lambda e, h=self.registerLink: self.register())
 
         self.loginButton = tk.Button(self.loginFrame, text='Log In', command=self.doLogin, bg="#CC2229", fg='white', borderwidth=0, width=20, height=2)
-        self.loginButton.grid(row=5, column=1, sticky="e", pady=10)
+        self.loginButton.grid(row=6, column=1, sticky="e", pady=10)
         self.loginButton.bind("<Enter>", lambda event, h=self.loginButton: self.loginButton.config(bg="#de3b40"))
         self.loginButton.bind("<Leave>", lambda event, h=self.loginButton: self.loginButton.config(bg="#CC2229"))
 
@@ -191,6 +203,20 @@ class App:
         self.accountsMenu = tk.Toplevel()
         self.accountsMenu.title('xACARS - Manage Accounts')
         self.accountsMenu.iconbitmap('images/Favicon.ico')
+        self.accountsMenu.geometry("400x250")
+
+        tk.Label(self.accountsMenu, text='Airline to edit: ').grid(row=0, column=0)
+        ttk.OptionMenu(self.accountsMenu, self.airline, 0, *self.List).grid(row=0, column=1)
+        tk.Label(self.accountsMenu, text='Airline Name: ').grid(row=1, column=0)
+        tk.Label(self.accountsMenu, text='Airline URL: ').grid(row=2, column=0)
+        tk.Label(self.accountsMenu, text='Username: ').grid(row=3, column=0)
+        tk.Label(self.accountsMenu, text='API Key: ').grid(row=4, column=0)
+        ttk.Entry(self.accountsMenu, textvariable=self.airline, text=self.airline).grid(row=1, column=1)
+        ttk.Entry(self.accountsMenu, textvariable=self.website, text=self.website).grid(row=2, column=1)
+        ttk.Entry(self.accountsMenu, textvariable=self.username, text=self.username).grid(row=3, column=1)
+        ttk.Entry(self.accountsMenu, show="*", textvariable=self.key, text=self.key).grid(row=4, column=1)
+        ttk.Button(self.accountsMenu, text='Update', command=self.doEdit).grid(row=5, column=0, sticky='we')
+        ttk.Button(self.accountsMenu, text='Delete Account', command=self.doDelete).grid(row=5, column=1)
 
 
     def dashboard(self):
@@ -240,7 +266,7 @@ class App:
         self.Log('View xACARS output here')
 
         self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky)
-        # tk.Label(self.dbBody, text="Welcome to xACARS\nEstafeta Edition by Henry Shires", font=self.h1).grid(row=0, column=0)
+        tk.Label(self.dbBody, text="Welcome to xACARS\nEstafeta Edition by Henry Shires", font=self.h1).grid(row=0, column=0)
 
         if config.checkUpdate == True:
             self.doCheckForUpdates()
@@ -442,15 +468,15 @@ class App:
     def startFlight(self):
         self.flightTime = int(time.time())
 
-        #if (self.connectionTest()):
-        posUpdateLoop.startLoop(self.pirepID)
-        self.Log('#######################################################')
-        self.Log("Now logging flight.")
-        self.startBtn.config(state="disabled")
-        self.finishBtn.config(state="normal")
+        if (self.connectionTest()):
+            posUpdateLoop.startLoop(self.pirepID)
+            self.Log('#######################################################')
+            self.Log("Now logging flight.")
+            self.startBtn.config(state="disabled")
+            self.finishBtn.config(state="normal")
 
     def updateEnrouteTime(self):
-        uetWindow = tk.Tk()
+        uetWindow = tk.Toplevel()
         newEnrouteTime = tk.StringVar(uetWindow)
         uetWindow.iconbitmap('images/Favicon.ico')
         uetWindow.title('Edit Enroute Time')
@@ -529,13 +555,22 @@ class App:
     Run Login function
     """
     def doLogin(self):
-        if (Login.login(self.airline, self.username, self.key)):
+        if (Login.login(self.airline, self.username, self.key, self.rememberMe)):
+            self.website.set(config.website)
             self.dashboard()
 
     def doRegister(self):
         Login.register(self.airline, self.website, self.username, self.key)
         self.registerFrame.grid_forget()
         self.login()
+
+    def doEdit(self):
+        Login.edit(self.airline, self.website, self.username, self.key)
+        self.accountsMenu.destroy()
+
+    def doDelete(self):
+        Login.delete(self.airline)
+        self.accountsMenu.destroy()
 
     """
     Check if the current version of xACARS is the latest, published version
