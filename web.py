@@ -37,7 +37,7 @@ def post(website, datax): # POST request, returns http response as an object
 
 def isLatestVersion():
     data = requests.get('https://raw.githubusercontent.com/slimit75/xACARS/update-system/updates.json').json()
-    return config.getPreRel == True and (str(data["latestBeta"]) == config.version or str(data["latestStable"]) == config.version)
+    return (config.getPreRel == True and str(data["latestBeta"]) == config.version) or str(data["latestStable"]) == config.version
 
 def delete(x): # For future use
     return

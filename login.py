@@ -12,25 +12,22 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import config
+import configparser
 import web
 import json
 import listAirlines
 
-List = config.List
-websites = config.websites
-savedAPIKeys = config.savedAPIKeys
-usernames = config.usernames
-
 def login(airline, username, key):
     try:
+
         getAirline = airline.get()
         getKey = key.get()
         getUsername = username.get()
-        index = List.index(getAirline)
+        index = config.List.index(getAirline)
 
         config.changeVar("APIKey", getKey)
         config.changeVar("airline", getAirline)
-        config.changeVar("website", websites[index])
+        config.changeVar("website", config.websites[index])
 
         data = web.getRaw(config.website + '/api/user')
 
@@ -64,5 +61,25 @@ def login(airline, username, key):
         tk.messagebox.showerror("xACARS Error", e)
         return False
 
-def register(airline, username, website, key):
+def register(airline, website, username, apiKey):
+    getAirline = airline.get()
+    getKey = apiKey.get()
+    getUsername = username.get()
+    getWebsite = website.get()
+
+    index = 0
+    while index < len(config.List):
+        index += 1
+
+    accounts = configparser.ConfigParser()
+    accounts[str(index + 1)] = {'name': getAirline, 'url': getWebsite, 'apikey': getKey, 'username': getUsername}
+
+    with open('airlines.ini', 'a') as configfile:
+        configfile.write("\n\n")
+        accounts.write(configfile)
+
+def edit():
+    return
+
+def delete():
     return

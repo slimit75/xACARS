@@ -23,7 +23,7 @@ pirepID = ""
 
 # Define functions
 def read(x):
-    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', "r")
+    file = open('input/' + x + '.txt', "r")
     toreturn = file.read()
     print(file.read())
     file.close()

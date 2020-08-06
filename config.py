@@ -62,7 +62,7 @@ def stringToBool(x):
         raise TypeError("Expected True, true, False, or false: not " + x)
 
 # Reloads the list of airlines.
-def reloadList():
+def reloadAirlines():
     global List
     global websites
     global savedAPIKeys
@@ -71,6 +71,11 @@ def reloadList():
     config = configparser.ConfigParser()
     config.read("airlines.ini")
     configSections = config.sections()
+
+    List = []
+    websites = []
+    savedAPIKeys = []
+    usernames = []
 
     try:
         for key in configSections:
@@ -81,14 +86,11 @@ def reloadList():
     except Exception as e:
         tk.messagebox.showerror("xACARS Error", e)
 
-def reloadConfig():
+def reloadSettings():
     global useFSUIPC
     global darkMode
     global checkUpdate
-    global getPreRel
-
-    # Reload the list of airlines
-    reloadList() 
+    global getPreRel 
 
     # Read the config file and set variables
     config = configparser.ConfigParser() 
@@ -120,4 +122,5 @@ def reloadIni():
         file.close()
 
 reloadIni()
-reloadConfig()
+reloadAirlines()
+reloadSettings()

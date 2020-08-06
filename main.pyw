@@ -54,14 +54,6 @@ class App:
         self.key = tk.StringVar(self.root)
         self.website = tk.StringVar(self.root)
 
-        self.List = config.List
-        self.websites = config.websites
-        self.savedAPIKeys = config.savedAPIKeys
-        self.usernames = config.usernames
-
-        self.flightTime = 0
-        self.bidList = []
-        self.selBid = ""
         self.pirepID = None
         self.data = None
 
@@ -97,8 +89,9 @@ class App:
         self.root.config(menu=self.toolbar)
 
         self.mainMenu = tk.Menu(self.toolbar, tearoff=False)
-        self.toolbar.add_cascade(label='Main', menu=self.mainMenu)
+        self.toolbar.add_cascade(label='File', menu=self.mainMenu)
         self.mainMenu.add_command(label='Preferences', command=self.settings)
+        self.mainMenu.add_command(label='Manage Accounts', command=self.accounts)
         self.mainMenu.add_command(label='Check for updates',
                                   command=self.doCheckForUpdates)
         self.mainMenu.add_separator()
@@ -115,6 +108,14 @@ class App:
     Main Menu (Login)
     """
     def login(self):
+        # Reload list of airlines
+        config.reloadAirlines()
+
+        self.List = config.List
+        self.websites = config.websites
+        self.savedAPIKeys = config.savedAPIKeys
+        self.usernames = config.usernames
+
         # Hide other components
         self.registerFrame.grid_forget()
 
@@ -168,7 +169,7 @@ class App:
         ttk.Entry(self.registerFrame, textvariable=self.airline, width=64).grid(row=3, column=1)
         tk.Label(self.registerFrame, text="Airline Name").grid(row=4, column=1, sticky="w", pady=(0, 5))
 
-        ttk.Entry(self.registerFrame, width=64).grid(row=5, column=1)
+        ttk.Entry(self.registerFrame, textvariable=self.website, width=64).grid(row=5, column=1)
         tk.Label(self.registerFrame, text="Airline Website (Format: https://myva.com - no slash at the end)").grid(row=6, column=1, sticky="w", pady=(0, 5))
 
         ttk.Entry(self.registerFrame, textvariable=self.username, width=64).grid(row=7, column=1)
@@ -187,6 +188,12 @@ class App:
         self.link1.bind("<Enter>", lambda event, h=self.link1: self.link1.config(fg="#de3b40"))
         self.link1.bind("<Leave>", lambda event, h=self.link1: self.link1.config(fg="#CC2229"))
         self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
+
+    def accounts(self):
+        self.accountsMenu = tk.Toplevel()
+        self.accountsMenu.title('xACARS - Manage Accounts')
+        self.accountsMenu.iconbitmap('images/Favicon.ico')
+
 
     def dashboard(self):
         self.body.grid_forget()
@@ -270,6 +277,56 @@ class App:
 
         about.mainloop()
 
+    def settings(self):
+        listOfBool = ["", "True", "False"]
+        inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
+
+        self.settingsWin = tk.Toplevel()
+        self.settingsWin.iconbitmap('images/Favicon.ico')
+
+        config.reloadSettings()
+
+        self.isfsuipc = tk.StringVar(self.settingsWin)
+        if config.useFSUIPC == True:
+            self.isfsuipc.set(str("FSUIPC (FSX & P3D)"))
+        else:
+            self.isfsuipc.set(str("FlyWithLua (X-Plane)"))
+
+        self.darkMode = tk.StringVar(self.settingsWin)
+        self.darkMode.set(str(config.darkMode))
+
+        self.checkUpdate = tk.StringVar(self.settingsWin)
+        self.checkUpdate.set(str(config.checkUpdate))
+
+        self.getPreRel = tk.StringVar(self.settingsWin)
+        self.getPreRel.set(str(config.getPreRel))
+
+        # Draw window
+        self.settingsWin.title('xACARS Settings')
+        tk.Label(self.settingsWin, text='Settings', font="Arial").grid(row=0, columnspan=1, sticky="w") 
+        tk.Label(self.settingsWin, text='Changes require restarting the program.').grid(row=1, columnspan=1, sticky="w")
+        ttk.Separator(self.settingsWin, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
+
+        tk.Label(self.settingsWin, text='Input Method: ').grid(row=3, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.isfsuipc, *inputOptions).grid(row=3, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='This will enable dark mode, in the future.').grid(row=4, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Check for updates on startup: ').grid(row=5, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='Turn this off if you want to manually check for updates.').grid(row=5, column=3, sticky="w")
+
+        tk.Label(self.settingsWin, text='Download pre-release versions: ').grid(row=6, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='This may be unstable.').grid(row=6, column=3, sticky="w")
+
+        ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
+        ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=9, columnspan=4, sticky="we")
+        self.settingsWin.mainloop()
+
     def setupFlight(self):
         self.dbBody.grid_forget()
 
@@ -282,6 +339,9 @@ class App:
         self.selBid = tk.StringVar(self.root)
 
         tk.Label(self.bidsFrame, text='Bids', font="Arial").grid(row=0, column=0)
+
+        # Setup Fields
+        self.bidList = []
 
         # Get bids from phpVMS
         data = web.get(config.website + '/api/user/bids')
@@ -381,52 +441,6 @@ class App:
         ttk.Button(self.prefileFrame, text='Pre-file', command=self.doPrefile).grid(
             row=7, columnspan=4, sticky="we")
 
-    def doPrefile(self):
-        selacf = self.selacf.get()
-
-        a = 0
-        for key in self.acf:
-            if key == selacf:
-                break
-            else:
-                a = a + 1
-
-        self.data = {
-            "airline_id": str(self.data["flight"]["airline_id"]),
-            "aircraft_id": str(self.ids[a-1]),
-            "flight_number": str(self.data["flight"]["flight_number"]),
-            "route_code": str(self.data["flight"]["route_code"]),
-            "route_leg": str(self.data["flight"]["route_leg"]),
-            "dpt_airport_id": str(self.data["flight"]["dpt_airport_id"]),
-            "arr_airport_id": str(self.data["flight"]["arr_airport_id"]),
-            "level": int(self.cruiseAlt.get()),
-            "planned_distance": int(self.plannedDistance.get()),
-            "planned_flight_time": int(self.plannedFlightTime.get()),
-            "route": str(self.route.get()),
-            "source_name": "xACARS",
-            "flight_type": str(self.data["flight"]["flight_type"])
-        }
-
-        self.data = json.dumps(self.data)
-        self.data = web.post(config.website + '/api/pireps/prefile', self.data)
-        self.data = json.loads(self.data.text)
-
-        try:
-            self.data = self.data["data"]
-            self.pirepID = self.data["id"]
-
-            self.prefileBtn.config(state="disabled")
-            self.startBtn.config(state="normal")
-            self.updateBtn.config(state="normal")
-
-            self.Log('#######################################################')
-            self.Log("Pre-file successful!")
-
-            self.prefileFrame.grid_forget()
-        except:
-            self.data = self.data["error"]
-            self.Log("Error: " + str(self.data["message"]))
-
     def startFlight(self):
         self.flightTime = int(time.time())
 
@@ -522,6 +536,8 @@ class App:
 
     def doRegister(self):
         Login.register(self.airline, self.website, self.username, self.key)
+        self.registerFrame.grid_forget()
+        self.login()
 
     """
     Check if the current version of xACARS is the latest, published version
@@ -531,6 +547,52 @@ class App:
             tk.messagebox.showinfo("xACARS Update", "Update available! You can download the latest version of xACARS from https://github.com/slimit75/xACARS/releases")
         else:
             tk.messagebox.showinfo("xACARS Update", "No updates available")
+
+    def doPrefile(self):
+        selacf = self.selacf.get()
+
+        a = 0
+        for key in self.acf:
+            if key == selacf:
+                break
+            else:
+                a = a + 1
+
+        self.data = {
+            "airline_id": str(self.data["flight"]["airline_id"]),
+            "aircraft_id": str(self.ids[a-1]),
+            "flight_number": str(self.data["flight"]["flight_number"]),
+            "route_code": str(self.data["flight"]["route_code"]),
+            "route_leg": str(self.data["flight"]["route_leg"]),
+            "dpt_airport_id": str(self.data["flight"]["dpt_airport_id"]),
+            "arr_airport_id": str(self.data["flight"]["arr_airport_id"]),
+            "level": int(self.cruiseAlt.get()),
+            "planned_distance": int(self.plannedDistance.get()),
+            "planned_flight_time": int(self.plannedFlightTime.get()),
+            "route": str(self.route.get()),
+            "source_name": "xACARS",
+            "flight_type": str(self.data["flight"]["flight_type"])
+        }
+
+        self.data = json.dumps(self.data)
+        self.data = web.post(config.website + '/api/pireps/prefile', self.data)
+        self.data = json.loads(self.data.text)
+
+        try:
+            self.data = self.data["data"]
+            self.pirepID = self.data["id"]
+
+            self.prefileBtn.config(state="disabled")
+            self.startBtn.config(state="normal")
+            self.updateBtn.config(state="normal")
+
+            self.Log('#######################################################')
+            self.Log("Pre-file successful!")
+
+            self.prefileFrame.grid_forget()
+        except:
+            self.data = self.data["error"]
+            self.Log("Error: " + str(self.data["message"]))
 
     def doFile(self):
         self.flightTime = int(time.time()) - self.flightTime
@@ -564,72 +626,17 @@ class App:
             self.Log("Error when attempting to file PIREP")
             self.Log(response.json())
 
-
     def connectionTest(self):
         track.endTrack()
         isSuccess = track.beginTrack()
         if isSuccess == "Can Connect":
-            tk.messagebox.showinfo("xACARS UIPC", "Connected to Sim!")
+            tk.messagebox.showinfo("xACARS", "Connected to Sim!")
             track.posUpdate()
             return True
         else:
-            tk.messagebox.showerror('Error','Unable to connect to sim. ' + isSuccess)
+            tk.messagebox.showerror('xACARS Error','Unable to connect to sim. ' + isSuccess)
             return False
         track.endTrack()
-
-    def editAirlines(self):
-        listAirlines.reload()
-        return
-
-    def settings(self):
-        listOfBool = ["", "True", "False"]
-        inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
-
-        self.settingsWin = tk.Toplevel()
-        self.settingsWin.iconbitmap('images/Favicon.ico')
-
-        config.reloadConfig()
-
-        self.isfsuipc = tk.StringVar(self.settingsWin)
-        if config.useFSUIPC == True:
-            self.isfsuipc.set(str("FSUIPC (FSX & P3D)"))
-        else:
-            self.isfsuipc.set(str("FlyWithLua (X-Plane)"))
-
-        self.darkMode = tk.StringVar(self.settingsWin)
-        self.darkMode.set(str(config.darkMode))
-
-        self.checkUpdate = tk.StringVar(self.settingsWin)
-        self.checkUpdate.set(str(config.checkUpdate))
-
-        self.getPreRel = tk.StringVar(self.settingsWin)
-        self.getPreRel.set(str(config.getPreRel))
-
-        # Draw window
-        self.settingsWin.title('xACARS Settings')
-        tk.Label(self.settingsWin, text='Settings', font="Arial").grid(row=0, columnspan=1, sticky="w") 
-        tk.Label(self.settingsWin, text='Changes require restarting the program.').grid(row=1, columnspan=1, sticky="w")
-        ttk.Separator(self.settingsWin, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
-
-        tk.Label(self.settingsWin, text='Input Method: ').grid(row=3, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.isfsuipc, *inputOptions).grid(row=3, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
-
-        tk.Label(self.settingsWin, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='This will enable dark mode, in the future.').grid(row=4, column=3, sticky="w")
-
-        tk.Label(self.settingsWin, text='Check for updates on startup: ').grid(row=5, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='Turn this off if you want to manually check for updates.').grid(row=5, column=3, sticky="w")
-
-        tk.Label(self.settingsWin, text='Download pre-release versions: ').grid(row=6, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='This may be unstable.').grid(row=6, column=3, sticky="w")
-
-        ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
-        ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=9, columnspan=4, sticky="we")
-        self.settingsWin.mainloop()
 
     def saveSettings(self):
         file = open("settings.ini", 'w')
@@ -645,7 +652,7 @@ class App:
         file.write("getPreReleaseVersions = " + self.getPreRel.get() + "\n")
         file.close()
 
-        self.settingsWin.quit()
+        self.settingsWin.destroy()
 
     def restoreToDefaults(self):
         self.restoreToDefault = False
@@ -658,7 +665,7 @@ class App:
             config.reloadIni()
             tk.messagebox.showinfo("xACARS","Restored defaults.")
 
-            self.settingsWin.quit()
+            self.settingsWin.destroy()
 
     def Log(self, text):
         self.log.insert(tk.END, text)

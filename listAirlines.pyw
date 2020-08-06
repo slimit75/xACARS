@@ -13,46 +13,6 @@ from tkinter import messagebox
 import config as configLib
 import configparser
 
-# Define functions
-## Closes the new airline creation screen
-def terminateNewAirline():
-    global name
-    global url
-    global apiKey
-    global newAirWindow
-    global username
-    global List
-
-    List = configLib.list
-    name = name.get()
-    url = url.get()
-    apiKey = apiKey.get()
-    username = username.get()
-    
-    a = 0
-    for key in List:
-        a = a + 1
-
-    config = configparser.ConfigParser()
-
-    if apiKey == "":
-        if username == "":
-            config[str(a+1)] = {'name': name, 'url': url}
-        else:
-            config[str(a+1)] = {'name': name, 'url': url, 'username': username}
-    else:
-        if username == "":
-            config[str(a+1)] = {'name': name, 'url': url, 'apikey': apiKey}
-        else:
-            config[str(a+1)] = {'name': name, 'url': url, 'apikey': apiKey, 'username': username}
-
-    with open('airlines.ini', 'a') as configfile:
-        configfile.write("\n\n")
-        config.write(configfile)
-
-    newAirWindow.quit()
-    return
-
 ## Closes the edit airline screen
 def terminateEditAirline():
     global airline
@@ -114,7 +74,7 @@ def terminateDeleteAirline():
     websites = configLib.websites
     savedAPIKeys = configLib.savedAPIKeys
     usernames = configLib.usernames
-    List = configLib.list
+    List = configLib.List
 
     airline = airline.get()
 
@@ -160,39 +120,6 @@ def terminateDeleteAirline():
 
     delAirWindow.quit()
     return
-
-## New airline screen
-def new():
-    global name
-    global url
-    global apiKey
-    global newAirWindow
-    global username
-
-    newAirWindow = tk.Tk()
-    newAirWindow.iconbitmap('Favicon.ico')
-    name = tk.StringVar(newAirWindow)
-    url = tk.StringVar(newAirWindow)
-    apiKey = tk.StringVar(newAirWindow)
-    username = tk.StringVar(newAirWindow)
-
-    newAirWindow.title('xACARS ' + configLib.version)
-    tk.Label(newAirWindow, text='Airline Name: ').grid(row=0, column=0)
-    tk.Label(newAirWindow, text='Airline URL: ').grid(row=1, column=0)
-    tk.Label(newAirWindow, text='Username: ').grid(row=2, column=0)
-    tk.Label(newAirWindow, text='API Key (Only if you want use autofill): ').grid(row=3, column=0)
-    ttk.Entry(newAirWindow, textvariable=name).grid(row=0, column=1)
-    ttk.Entry(newAirWindow, textvariable=url).grid(row=1, column=1)
-    ttk.Entry(newAirWindow, textvariable=username).grid(row=2, column=1)
-    ttk.Entry(newAirWindow, show="*", textvariable=apiKey).grid(row=3, column=1)
-    ttk.Button(newAirWindow, text='Create', command=terminateNewAirline).grid(row=4, columnspan=2, sticky='we')
-    newAirWindow.mainloop()
-    newAirWindow.destroy()
-
-    configLib.reloadList()
-    newAirWindow.quit()
-    newAirWindow.destroy()
-    reload()
 
 ## Autofill for the edit airline screen
 def editAutofill():
@@ -266,7 +193,6 @@ def edit():
     apiKey = tk.StringVar(editAirWindow)
     username = tk.StringVar(editAirWindow)
 
-    editAirWindow.title('xACARS ' + configLib.version)
     tk.Label(editAirWindow, text='Airline to edit: ').grid(row=0, column=0)
     ttk.OptionMenu(editAirWindow, airline, *List).grid(row=0, column=1)
     tk.Label(editAirWindow, text='Airline Name: ').grid(row=1, column=0)
@@ -285,48 +211,3 @@ def edit():
     configLib.reloadList()
     editAirWindow.quit()
     editAirWindow.destroy()
-    reload()
-
-## Closes main menu
-def quit():
-    global window
-    window.quit()
-    window.destroy()
-
-## Draw main window
-def reload():
-    global window
-    window = tk.Tk()
-
-    configLib.reloadList()
-
-    list = configLib.list
-    websites = configLib.websites
-    savedAPIKeys = configLib.savedAPIKeys
-    usernames = configLib.usernames
-
-    window.title('xACARS - Airlines')
-    tk.Label(window, text='Airline Name').grid(row=0, column=0) 
-    tk.Label(window, text='Airline URL').grid(row=0, column=1)
-    tk.Label(window, text='Username').grid(row=0, column=2)
-    tk.Label(window, text='APIKey (optional)').grid(row=0, column=3)
-    ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
-
-    a = 1
-    for key in list:
-        try:
-            name = list[a]
-            tk.Label(window, text=name).grid(row=a+3, column=0)
-            tk.Label(window, text=websites[a]).grid(row=a+3, column=1)
-            tk.Label(window, text=usernames[a]).grid(row=a+3, column=2)
-            tk.Label(window, text=savedAPIKeys[a]).grid(row=a+3, column=3)
-            a = a + 1
-        except:
-            pass
-
-    ttk.Separator(window, orient=tk.HORIZONTAL).grid(row=a+3, columnspan=4, sticky="we")
-    ttk.Button(window, text='Finish', command=quit).grid(row=a+4, column=0, sticky="we")
-    ttk.Button(window, text='Add Airline', command=new).grid(row=a+4, column=1, sticky="we")
-    ttk.Button(window, text='Edit Airline', command=edit).grid(row=a+4, column=2, sticky="we")
-    ttk.Button(window, text='Delete Airline', command=delete).grid(row=a+4, column=3, sticky="we")
-    window.mainloop()
