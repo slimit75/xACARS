@@ -16,6 +16,7 @@ import json
 import time
 import urllib.request as urllib
 import os
+import webbrowser
 
 # Import local files
 import config
@@ -29,13 +30,12 @@ Draw xACARS UI
 '''
 
 class App:
-    global exportData
 
     def __init__(self, root):
         self.root = root
         self.root.iconbitmap('images/Favicon.ico')
         self.root.title('xACARS - ' + config.version)
-        self.root.geometry("960x480")
+        self.root.geometry("960x530")
 
         # Frames
         self.loginFrame = tk.Frame(self.root)
@@ -66,6 +66,7 @@ class App:
         self.h1 = tkFont.Font(family="Verdana", size=20)
         self.h2 = tkFont.Font(family="Verdana", size=18)
         self.h3 = tkFont.Font(family="Verdana", size=14)
+        self.h4 = tkFont.Font(family="Verdana", size=12)
 
         self.style = ttk.Style()
         self.style.configure("TButton", padding=5)
@@ -146,7 +147,7 @@ class App:
 
         self.headerLbl = tk.Label(self.body, text="xACARS - Estafeta Edition",
                               font=self.h1)
-        self.headerLbl.grid(row=1, column=1, pady=20)
+        self.headerLbl.grid(row=1, column=1, pady=40)
 
         self.loginFrame.grid(row=2, column=1)
         self.loginFrame.grid_rowconfigure(0, weight=0)
@@ -242,7 +243,7 @@ class App:
         self.root.grid_columnconfigure(2, weight=0)
         
         self.dbHeader.grid(row=0, column=0)
-        tk.Label(self.dbHeader, image=self.img2).grid(row=0, column=0, pady=5)
+        tk.Label(self.dbHeader, image=self.img2).grid(row=0, column=0, pady=20)
 
         # Button Grid
         self.style.configure("TButton", padding=20)
@@ -276,8 +277,25 @@ class App:
 
         self.Log('View xACARS output here')
 
-        self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky)
-        tk.Label(self.dbBody, text="Welcome to xACARS\nEstafeta Edition by Henry Shires", font=self.h1).grid(row=0, column=0)
+        self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=(5, 0))
+        tk.Label(self.dbBody, text="Welcome to xACARS - Estafeta Edition", font=self.h1, fg="#cc2229").grid(row=0, column=0)
+        tk.Label(self.dbBody, text="The official ACARS of Estafeta Virtual", font=self.h2).grid(row=1, column=0)
+        tk.Label(self.dbBody, text="ESF Edition by Henry Shires", font=self.h3).grid(row=2, column=0, sticky="w", pady=(5, 0))
+
+        link1 = tk.Label(self.dbBody, text="https://estafetava.com", font=self.h3, fg="#cc2229")
+        link1.grid(row=2, column=0, pady=(10, 0), sticky="e")
+        link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://estafetava.com"))
+
+        ttk.Separator(self.dbBody, orient="horizontal").grid(row=3, column=0, sticky="ew", pady=(10, 0))
+        tk.Label(self.dbBody, text="Get Started - Track a flight:", font=self.h4, fg="#cc2229").grid(row=4, column=0, sticky="w", pady=(5, 0))
+        tk.Label(self.dbBody, text="1. Click \"Select Bid\" and view the list of bids", font=self.h4).grid(row=5, column=0, sticky="w", pady=(10, 0))
+        tk.Label(self.dbBody, text="    * Make sure to select a bid on your airline's website", font=self.h4).grid(row=6, column=0, sticky="w")
+        tk.Label(self.dbBody, text="2. Pre-file your flight", font=self.h4).grid(row=7, column=0, sticky="w")
+        tk.Label(self.dbBody, text="    * Input your aircraft, cruising altitude, estimated enroute time, distance, and route", font=self.h4).grid(row=8, column=0, sticky="w")
+        tk.Label(self.dbBody, text="3. Enter your sim, enabled FSUIPC, and click \"Start\". Update your enroute time as needed", font=self.h4).grid(row=9, column=0, sticky="w")
+        tk.Label(self.dbBody, text="4. After completion of your flight in sim, click \"Finish\"", font=self.h4).grid(row=10, column=0, sticky="w")
+        tk.Label(self.dbBody, text="5. File your flight and upload it to your airline!", font=self.h4).grid(row=11, column=0, sticky="w")
+        tk.Label(self.dbBody, text="    * Input your final enroute time, route, and fuel used, as well as any comments.", font=self.h4).grid(row=12, column=0, sticky="w")
 
         if config.checkUpdate == True:
             self.doCheckForUpdates()
