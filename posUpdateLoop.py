@@ -28,9 +28,8 @@ pirepID = ""
 def read(x):
     file = open('input/' + x + '.txt', "r")
     toreturn = file.read()
-    print(file.read())
     file.close()
-    print(toreturn)
+
     return toreturn
 
 def loop():

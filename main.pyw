@@ -562,7 +562,7 @@ class App:
 
         tk.Label(self.fileFrame, text='File Pirep', font="Arial").grid(sticky="w")
         ttk.Separator(self.fileFrame, orient=tk.HORIZONTAL).grid(
-            row=1, columnspan=2, sticky="we")
+            row=1, column=1, sticky="we")
 
         tk.Label(self.fileFrame, text='Fuel Used').grid(row=2, column=0, sticky="w")
         ttk.Entry(self.fileFrame, textvariable=self.fuel).grid(
@@ -573,12 +573,12 @@ class App:
             row=3, column=1, sticky="we")
 
         ttk.Checkbutton(self.fileFrame, text="Comment?",
-                        variable=self.addComment).grid(row=4, sticky="w")
+                        variable=self.addComment).grid(row=5, sticky="w")
         ttk.Entry(self.fileFrame, textvariable=self.comment, width=50).grid(
-            row=4, column=1, sticky="nwwe")
+            row=5, column=1, sticky="nwwe")
 
-        ttk.Button(self.fileFrame, text='Save', command=self.doFile).grid(
-            row=5, columnspan=2, sticky="we")
+        ttk.Button(self.fileFrame, text='Submit PIREP', command=self.doFile).grid(
+            row=6, columnspan=2, sticky="we")
 
     """
     Run Login function
@@ -658,8 +658,8 @@ class App:
             "airline_id": str(self.data["flight"]["airline_id"]),
             "aircraft_id": str(self.ids[a-1]),
             "flight_number": str(self.data["flight"]["flight_number"]),
-            "route_code": str(self.data["flight"]["route_code"]),
-            "route_leg": str(self.data["flight"]["route_leg"]),
+            "route_code": "",
+            "route_leg": "",
             "dpt_airport_id": str(self.data["flight"]["dpt_airport_id"]),
             "arr_airport_id": str(self.data["flight"]["arr_airport_id"]),
             "level": int(self.cruiseAlt.get()),
@@ -692,16 +692,21 @@ class App:
 
     def doFile(self):
         self.flightTime = int(time.time()) - self.flightTime
-        self.flightTime = time.strftime('%H%M', time.gmtime(self.flightTime))
 
-        self.data = {"flight_time": self.flightTime,
-                "fuel_used": self.fuel.get(), "distance": self.distance.get()}
+        self.data = {
+            "flight_time": self.flightTime,
+            "fuel_used": self.fuel.get(), 
+            "distance": self.distance.get()
+            }
         self.data = json.dumps(self.data)
 
         response = web.post(config.website + '/api/pireps/' +
                         self.pirepID + '/file', self.data)
 
         addComment = self.addComment.get()
+
+        commentsResponse = ""
+
         if addComment == 1:
             self.data = {"comment": str(self.comment.get()), }
             self.data = json.dumps(self.data)
@@ -711,23 +716,20 @@ class App:
         if response.status_code == 200:
             self.finishBtn.config(state="disabled")
             self.bidBtn.config(state="enabled")
-            self.Log('#######################################################')
             self.Log("PIREP Submitted! Hope you had a great flight!")
+            self.fileBtn.config(state="disabled")
             self.fileFrame.grid_forget()
-            self.dbBody.grid()
-        elif commentsResponse.status_code != 200:
-            self.Log('#######################################################')
-            self.Log("Error when attempting to add comments")
-            self.Log(commentsResponse.json())
+            self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=(5, 0))
+            
         else:
-            self.Log('#######################################################')
             self.Log("Error when attempting to file PIREP")
             self.Log(response.json())
+            self.Log(commentsResponse.json())
 
     def connectionTest(self):
         track.endTrack()
         isSuccess = track.beginTrack()
-        if isSuccess == "Can Connect":
+        if isSuccess:
             tk.messagebox.showinfo("xACARS", "Connected to Sim!")
             track.posUpdate()
             return True

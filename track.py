@@ -17,7 +17,7 @@ import os
 def beginTrack():
     try:
         pyuipc.open(0)
-        return "UIPC Connection Successful!"
+        return True
     except pyuipc.FSUIPCException as e:
         return "UIPC Connection Error: " + str(e.errorCode)
     except Exception as e:
