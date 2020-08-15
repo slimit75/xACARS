@@ -1,4 +1,4 @@
-# xACARS Estafeta Edition by Henry Shires
+# xACARS v2.0.0 by Henry Shires
 
 A simple and free ACARS system supporting phpVMS-based airlines
 
