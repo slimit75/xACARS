@@ -78,7 +78,7 @@ class App:
         self.dashboardViewPadY = 100
 
         # Images
-        img = Image.open("images/estafeta_red.png")
+        img = Image.open("images/feature.png")
         img = img.resize((int(img.size[0] * 0.75), int(img.size[1] * 0.75)))
 
         img2 = img.resize((int(img.size[0] * 0.5), int(img.size[1] * 0.5)))
