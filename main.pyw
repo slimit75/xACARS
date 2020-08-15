@@ -35,7 +35,7 @@ class App:
         self.root = root
         self.root.iconbitmap('images/Favicon.ico')
         self.root.title('xACARS - ' + config.version)
-        self.root.geometry("960x530")
+        self.root.geometry("950x575")
 
         # Frames
         self.loginFrame = tk.Frame(self.root)
@@ -87,6 +87,8 @@ class App:
         self.img2 = ImageTk.PhotoImage(img2)
 
         # Widgets
+        self.headerLbl = tk.Label(self.body, font=self.h1)
+
         if (config.rememberUser()):
             self.airline.set(config.airline)
             self.website.set(config.website)
@@ -145,8 +147,8 @@ class App:
         self.banner = tk.Label(self.body, image=self.img)
         self.banner.grid(row=0, column=1)
 
-        self.headerLbl = tk.Label(self.body, text="xACARS - Estafeta Edition",
-                              font=self.h1)
+        self.headerLbl.grid_forget()
+        self.headerLbl.config(text="xACARS - Login")
         self.headerLbl.grid(row=1, column=1, pady=40)
 
         self.loginFrame.grid(row=2, column=1)
@@ -166,21 +168,22 @@ class App:
 
         ttk.Checkbutton(self.loginFrame, text="Log in automatically", variable=self.rememberMe).grid(row=5, column=1, sticky="w")
 
-        self.registerLink = tk.Label(self.loginFrame, text='New to xACARS? Add an account', fg="#CC2229")
+        self.registerLink = tk.Label(self.loginFrame, text='New to xACARS? Add an account', fg="#676767")
         self.registerLink.grid(row=6, column=1, sticky="w", pady=10)
-        self.registerLink.bind("<Enter>", lambda event, h=self.registerLink: self.registerLink.config(fg="#de3b40"))
-        self.registerLink.bind("<Leave>", lambda event, h=self.registerLink: self.registerLink.config(fg="#CC2229"))
+        self.registerLink.bind("<Enter>", lambda event, h=self.registerLink: self.registerLink.config(fg="#bbb"))
+        self.registerLink.bind("<Leave>", lambda event, h=self.registerLink: self.registerLink.config(fg="#676767"))
         self.registerLink.bind("<Button-1>", lambda e, h=self.registerLink: self.register())
 
-        self.loginButton = tk.Button(self.loginFrame, text='Log In', command=self.doLogin, bg="#CC2229", fg='white', borderwidth=0, width=20, height=2)
+        self.loginButton = tk.Button(self.loginFrame, text='Log In', command=self.doLogin, bg="#676767", fg='white', borderwidth=0, width=20, height=2)
         self.loginButton.grid(row=6, column=1, sticky="e", pady=10)
-        self.loginButton.bind("<Enter>", lambda event, h=self.loginButton: self.loginButton.config(bg="#de3b40"))
-        self.loginButton.bind("<Leave>", lambda event, h=self.loginButton: self.loginButton.config(bg="#CC2229"))
+        self.loginButton.bind("<Enter>", lambda event, h=self.loginButton: self.loginButton.config(bg="#bbb"))
+        self.loginButton.bind("<Leave>", lambda event, h=self.loginButton: self.loginButton.config(bg="#676767"))
 
     def register(self):
         self.loginFrame.grid_forget()
 
         self.registerFrame.grid(row=2, column=1)
+        self.headerLbl.grid_forget()
         self.headerLbl.config(text="xACARS - Register")
         self.headerLbl.grid(row=1, column=1, pady=10)
 
@@ -196,15 +199,15 @@ class App:
         ttk.Entry(self.registerFrame, show="*", textvariable=self.key, width=64).grid(row=9, column=1)
         tk.Label(self.registerFrame, text="API Key").grid(row=10, column=1, sticky="w")
 
-        self.registerButton = tk.Button(self.registerFrame, text='Add Account', command=self.doRegister, bg="#CC2229", fg='white', borderwidth=0, width=20, height=2)
+        self.registerButton = tk.Button(self.registerFrame, text='Add Account', command=self.doRegister, bg="#676767", fg='white', borderwidth=0, width=20, height=2)
         self.registerButton.grid(row=11, column=1, sticky="e", pady=10)
-        self.registerButton.bind("<Enter>", lambda event, h=self.registerButton: self.registerButton.config(bg="#de3b40"))
-        self.registerButton.bind("<Leave>", lambda event, h=self.registerButton: self.registerButton.config(bg="#CC2229"))
+        self.registerButton.bind("<Enter>", lambda event, h=self.registerButton: self.registerButton.config(bg="#bbb"))
+        self.registerButton.bind("<Leave>", lambda event, h=self.registerButton: self.registerButton.config(bg="#676767"))
 
-        self.link1 = tk.Label(self.registerFrame, text='Back', fg="#CC2229")
+        self.link1 = tk.Label(self.registerFrame, text='Back', fg="#676767")
         self.link1.grid(row=11, column=1, sticky="w", pady=10)
-        self.link1.bind("<Enter>", lambda event, h=self.link1: self.link1.config(fg="#de3b40"))
-        self.link1.bind("<Leave>", lambda event, h=self.link1: self.link1.config(fg="#CC2229"))
+        self.link1.bind("<Enter>", lambda event, h=self.link1: self.link1.config(fg="#bbb"))
+        self.link1.bind("<Leave>", lambda event, h=self.link1: self.link1.config(fg="#676767"))
         self.link1.bind("<Button-1>", lambda e, h=self.link1: self.login())
 
     def accounts(self):
@@ -278,16 +281,16 @@ class App:
         self.Log('View xACARS output here')
 
         self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=(5, 0))
-        tk.Label(self.dbBody, text="Welcome to xACARS - Estafeta Edition", font=self.h1, fg="#cc2229").grid(row=0, column=0)
-        tk.Label(self.dbBody, text="The official ACARS of Estafeta Virtual", font=self.h2).grid(row=1, column=0)
-        tk.Label(self.dbBody, text="ESF Edition by Henry Shires", font=self.h3).grid(row=2, column=0, sticky="w", pady=(5, 0))
+        tk.Label(self.dbBody, text="Welcome to xACARS", font=self.h1, fg="#676767").grid(row=0, column=0)
+        tk.Label(self.dbBody, text="xACARS has a new look!", font=self.h2).grid(row=1, column=0)
+        tk.Label(self.dbBody, text="New UI by Henry Shires", font=self.h3).grid(row=2, column=0, sticky="w", pady=(5, 0))
 
-        link1 = tk.Label(self.dbBody, text="https://estafetava.com", font=self.h3, fg="#cc2229")
+        link1 = tk.Label(self.dbBody, text="Join Our VA: https://estafetava.com", font=self.h3, fg="#676767")
         link1.grid(row=2, column=0, pady=(10, 0), sticky="e")
         link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://estafetava.com"))
 
         ttk.Separator(self.dbBody, orient="horizontal").grid(row=3, column=0, sticky="ew", pady=(10, 0))
-        tk.Label(self.dbBody, text="Get Started - Track a flight:", font=self.h4, fg="#cc2229").grid(row=4, column=0, sticky="w", pady=(5, 0))
+        tk.Label(self.dbBody, text="Get Started - Track a flight:", font=self.h4, fg="#676767").grid(row=4, column=0, sticky="w", pady=(5, 0))
         tk.Label(self.dbBody, text="1. Click \"Select Bid\" and view the list of bids", font=self.h4).grid(row=5, column=0, sticky="w", pady=(10, 0))
         tk.Label(self.dbBody, text="    * Make sure to select a bid on your airline's website", font=self.h4).grid(row=6, column=0, sticky="w")
         tk.Label(self.dbBody, text="2. Pre-file your flight", font=self.h4).grid(row=7, column=0, sticky="w")
