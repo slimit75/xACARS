@@ -37,7 +37,7 @@ def login(airline, username, key, rememberMe):
         if getAirline == parser[sections[index]]["name"] and getKey == parser[sections[index]]["apikey"] and getUsername == parser[sections[index]]["username"]:
             if str(data) == "<Response [200]>":
                 data = json.loads(data.text)
-                data = data["data"]["name"]
+                data = data["data"]["ident"]
                 if getUsername == data:
                     if getRememberMe:
                         parser.set(str(index + 1), "rememberMe", "True")
