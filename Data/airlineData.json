@@ -1,0 +1,20 @@
+{
+    "airlines": [{
+        "name": "Atlas Air Virtual",
+        "icao": "GTI",
+        "website": "",
+        "phpVMS_version": 5,
+        "remember_details": false,
+        "remembered_id": "",
+        "remembered_pass": ""
+    },
+    {
+        "name": "Estafeta Virtual",
+        "icao": "AAA",
+        "website": "",
+        "phpVMS_version": 7,
+        "remember_details": false,
+        "remembered_id": "",
+        "remembered_pass": ""
+    }]
+}

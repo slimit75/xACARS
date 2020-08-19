@@ -4,9 +4,6 @@
     <head>
         <title>xACARS v1.1</title>
         <link rel="stylesheet" id="stylesheet" type="text/css" href="app.css">
-        <!--
-        <link href='https://fonts.googleapis.com/css?family=B612' rel='stylesheet'>
-        -->
     </head>
     <script>
         const remote = require('electron').remote;
@@ -21,10 +18,31 @@
         }
     </script>
     <body>
+        <img src="header.png"><br>
+        <button class="topMenu" onClick="showAirlineSettings">Airlines</button>
+        <button class="topMenu" onClick="showSettings()">Settings</button>
+        <button class="topMenu" onClick="showHelp()">Help</button>
+        <h2>Virtual Airline Login</h2>
+        <p class="loginOption">Airline</p>
+        <select class="optionInput" style="width: 502px; padding-left: 0px; padding-right: 0px;">
+            <option>GTI - Atlas Air Virtual (phpVMS 5)</option>
+            <option>AAA - Estafeta Virtual (phpVMS 7)</option>
+        </select>
+        <p class="loginOption">Airline ID</p>
+        <input class="optionInput" placeholder="ABC0123">
+        <p class="loginOption">Password/API Key</p>
+        <input class="optionInput" type="password">
+        <br>
+        <p style="margin: 0;"><input type="checkbox">Remember me?</p>
+        <button class="nextButton">Login</button>
+        
+        <!--
         <img class="bg" src="bg.svg">
 
         <div class="titleBar">
             <h1 id="title">xACARS v1.1</h1>
+            
+            
 
             <button onclick="appMinimize()">
                 <img id="min" src="min.png">
@@ -34,5 +52,27 @@
                 <img id="exit" src="close.png">
             </button>
         </div>
+        -->
+        <script>
+            function showAirlineSettings() {
+                // show help
+            }
+
+            function showSettings() {
+                // show help
+            }
+
+            function showHelp() {
+                // show help
+            }
+
+            function appMinimize() {
+
+            }
+
+            function appExit() {
+                
+            }
+        </script>
     </body>
 </html>
