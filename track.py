@@ -13,33 +13,36 @@ import pyuipc
 import math
 import os
 
-# Define functions
-def beginTrack(): # Opens connection to FSUIPC/XPUIPC, and returns if it was successful.
+# Opens connection to FSUIPC/XPUIPC, and returns if it was successful.
+def beginTrack():
     try:
         pyuipc.open(0)
-        return "Can Connect"
+        return True
     except pyuipc.FSUIPCException as e:
-        return "FSUIPC/XPUIPC ERROR: " + str(e.errorCode)
+        return "UIPC Connection Error: " + str(e.errorCode)
     except Exception as e:
         return "ERROR: " + str(e)
 
-def endTrack(): # Closes connection to FSUIPC/XPUIPC.
+def endTrack():  # Closes connection to FSUIPC/XPUIPC.
     pyuipc.close()
 
-def writeData(x, y): # Write data to a text file in the input folder. Creates file if there is none, and if there is one it overwrites it.
-    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', 'w')
+
+# Write data to a text file in the input folder. Creates file if there is none, and if there is one it overwrites it.
+def writeData(x, y):
+    file = open('input/' + x + '.txt', 'w')
     file.write(str(y))
     file.close()
 
-def posUpdate(): # Update input folder with latest data from FSUIPC/XPUIPC.
+
+def posUpdate():  # Update input folder with latest data from FSUIPC/XPUIPC.
     lat = pyuipc.read([(0x6010, "f")])
     lat = float(lat[0])
     writeData('lat', lat)
     long = pyuipc.read([(0x6018, "f")])
     long = float(long[0])
     writeData('lon', long)
-    #hdg = pyuipc.read([(0x6038, "f")]) True Heading
-    hdg = pyuipc.read([(0x6040, "f")]) # Magnetic Heading
+    # hdg = pyuipc.read([(0x6038, "f")]) True Heading
+    hdg = pyuipc.read([(0x6040, "f")])  # Magnetic Heading
     hdg = float(hdg[0])
     hdg = hdg*180/math.pi
     writeData('heading', hdg)

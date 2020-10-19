@@ -17,17 +17,19 @@ import web
 import config
 import os
 
+import tkinter as tk
+from tkinter import messagebox
+
 # Set variables
 stop = False
 pirepID = ""
 
 # Define functions
 def read(x):
-    file = open(str(os.getenv('APPDATA')) + '/xACARS/input/' + x + '.txt', "r")
+    file = open('input/' + x + '.txt', "r")
     toreturn = file.read()
-    print(file.read())
     file.close()
-    print(toreturn)
+
     return toreturn
 
 def loop():
@@ -44,10 +46,8 @@ def loop():
             exportdata = json.dumps(exportdata)
             
             web.post(config.website + '/api/pireps/' + pirepID + '/acars/position', exportdata)
-
-            print(exportdata)
         except Exception as e:
-            print(e)
+            tk.messagebox.showerror("xACARS Error - Update Loop", e)
 
         time.sleep(5)
 
