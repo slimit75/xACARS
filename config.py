@@ -16,7 +16,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Version
-version = "v1.0.0-alpha2"
+version = "v1.0.0-alpha3"
 
 # User Fields
 airline = ""
@@ -31,8 +31,6 @@ savedAPIKeys = []
 usernames = []
 
 # Settings fields
-useFSUIPC = False
-darkMode = False
 checkUpdate = False
 getPreRel = False
 
@@ -92,8 +90,6 @@ def reloadAirlines():
         tk.messagebox.showerror("xACARS Error", e)
 
 def reloadSettings():
-    global useFSUIPC
-    global darkMode
     global checkUpdate
     global getPreRel 
 
@@ -102,8 +98,6 @@ def reloadSettings():
     config.read("settings.ini")
 
     # Change the "True/False" variables to a boolean
-    useFSUIPC = stringToBool(config["DEFAULT"]["fsuipc"])
-    darkMode = stringToBool(config["DEFAULT"]["darkMode"])
     checkUpdate = stringToBool(config["DEFAULT"]["checkForUpdatesOnStart"])
     getPreRel = stringToBool(config["DEFAULT"]["getPreReleaseVersions"])
 
@@ -122,8 +116,6 @@ def reloadIni():
     if os.path.exists('settings.ini') == False:
         file = open("settings.ini", 'w')
         file.write("[DEFAULT]\n")
-        file.write("fsuipc = True\n")
-        file.write("darkMode = False\n")
         file.write("checkForUpdatesOnStart = True\n")
         file.write("getPreReleaseVersions = False\n")
         file.close()

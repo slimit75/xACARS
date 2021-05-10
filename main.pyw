@@ -233,7 +233,6 @@ class App:
         ttk.Button(self.accountsMenu, text='Update', command=self.doEdit).grid(row=5, column=0, sticky='we')
         ttk.Button(self.accountsMenu, text='Delete Account', command=self.doDelete).grid(row=5, column=1)
 
-
     def dashboard(self):
         self.body.grid_forget()
         self.loginFrame.grid_forget()
@@ -335,21 +334,11 @@ class App:
 
     def settings(self):
         listOfBool = ["", "True", "False"]
-        inputOptions = ["", "FSUIPC (FSX & P3D)", "FlyWithLua (X-Plane)"]
 
         self.settingsWin = tk.Toplevel()
         self.settingsWin.iconbitmap('images/Favicon.ico')
 
         config.reloadSettings()
-
-        self.isfsuipc = tk.StringVar(self.settingsWin)
-        if config.useFSUIPC == True:
-            self.isfsuipc.set(str("FSUIPC (FSX & P3D)"))
-        else:
-            self.isfsuipc.set(str("FlyWithLua (X-Plane)"))
-
-        self.darkMode = tk.StringVar(self.settingsWin)
-        self.darkMode.set(str(config.darkMode))
 
         self.checkUpdate = tk.StringVar(self.settingsWin)
         self.checkUpdate.set(str(config.checkUpdate))
@@ -363,24 +352,16 @@ class App:
         tk.Label(self.settingsWin, text='Changes require restarting the program.').grid(row=1, columnspan=1, sticky="w")
         ttk.Separator(self.settingsWin, orient=tk.HORIZONTAL).grid(row=2, columnspan=4, sticky="we")
 
-        tk.Label(self.settingsWin, text='Input Method: ').grid(row=3, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.isfsuipc, *inputOptions).grid(row=3, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='Turn this off if you want an external program to write to the files in the input folder.').grid(row=3, column=3, sticky="w")
+        tk.Label(self.settingsWin, text='Check for updates on startup: ').grid(row=3, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.checkUpdate, *listOfBool).grid(row=3, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='Turn this off if you want to manually check for updates.').grid(row=3, column=3, sticky="w")
 
-        tk.Label(self.settingsWin, text='Dark Mode: ').grid(row=4, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.darkMode, *listOfBool).grid(row=4, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='This will enable dark mode, in the future.').grid(row=4, column=3, sticky="w")
+        tk.Label(self.settingsWin, text='Download pre-release versions: ').grid(row=4, column=0, sticky="e")
+        ttk.OptionMenu(self.settingsWin, self.getPreRel, *listOfBool).grid(row=4, column=1, sticky="we")
+        tk.Label(self.settingsWin, text='This may be unstable.').grid(row=4, column=3, sticky="w")
 
-        tk.Label(self.settingsWin, text='Check for updates on startup: ').grid(row=5, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.checkUpdate, *listOfBool).grid(row=5, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='Turn this off if you want to manually check for updates.').grid(row=5, column=3, sticky="w")
-
-        tk.Label(self.settingsWin, text='Download pre-release versions: ').grid(row=6, column=0, sticky="e")
-        ttk.OptionMenu(self.settingsWin, self.getPreRel, *listOfBool).grid(row=6, column=1, sticky="we")
-        tk.Label(self.settingsWin, text='This may be unstable.').grid(row=6, column=3, sticky="w")
-
-        ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=8, columnspan=4, sticky="we")
-        ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=9, columnspan=4, sticky="we")
+        ttk.Button(self.settingsWin, text='Restore to defaults', command=self.restoreToDefaults).grid(row=5, columnspan=4, sticky="we")
+        ttk.Button(self.settingsWin, text='Save & Exit', command=self.saveSettings).grid(row=6, columnspan=4, sticky="we")
         self.settingsWin.mainloop()
 
     def setupFlight(self):
@@ -734,7 +715,6 @@ class App:
         isSuccess = track.beginTrack()
         if isSuccess:
             tk.messagebox.showinfo("xACARS", "Connected to Sim!")
-            track.posUpdate()
             return True
         else:
             tk.messagebox.showerror('xACARS Error','Unable to connect to sim. ' + isSuccess)
@@ -752,12 +732,6 @@ class App:
         file = open("settings.ini", 'w')
         file.write("[DEFAULT]\n")
 
-        if self.isfsuipc.get() == "FSUIPC (FSX & P3D)":
-            file.write("fsuipc = True\n")
-        else:
-            file.write("fsuipc = False\n")
-
-        file.write("darkMode = " + self.darkMode.get() + "\n")
         file.write("checkForUpdatesOnStart = " + self.checkUpdate.get() + "\n")
         file.write("getPreReleaseVersions = " + self.getPreRel.get() + "\n")
         file.close()

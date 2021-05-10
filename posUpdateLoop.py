@@ -25,22 +25,14 @@ stop = False
 pirepID = ""
 
 # Define functions
-def read(x):
-    file = open('input/' + x + '.txt', "r")
-    toreturn = file.read()
-    file.close()
-
-    return toreturn
-
 def loop():
     global pirepID
     while True:
-        if config.useFSUIPC == True: track.beginTrack()
-        try:
-            if config.useFSUIPC == True: track.posUpdate()
+        track.beginTrack()
 
-            
-            exportdata = {"lat": read('lat'),"lon": read('lon'),"heading": read('heading'),"altitude": read('altitude'),"vs": read('vs'),"gs": read('gs')}
+        lat, lon, hdg, vs, alt, gs = track.posUpdate()
+        try:
+            exportdata = {"lat": lat,"lon": lon,"heading": hdg,"altitude": alt,"vs": vs,"gs": gs}
             exportdata = {"positions": [exportdata]}
 
             exportdata = json.dumps(exportdata)
