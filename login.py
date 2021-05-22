@@ -29,47 +29,36 @@ def login(airline, username, key, rememberMe):
         config.changeVar("website", config.websites[index])
 
         data = web.getRaw(config.website + '/api/user')
+        dataParsed = web.get(config.website + '/api/user')
 
         parser = configparser.ConfigParser()
         parser.read("airlines.ini")
         sections = parser.sections()
 
-        if getAirline == parser[sections[index]]["name"] and getKey == parser[sections[index]]["apikey"] and getUsername == parser[sections[index]]["username"]:
-            if str(data) == "<Response [200]>":
-                data = json.loads(data.text)
-                data = data["data"]["ident"]
-                if getUsername == data:
-                    if getRememberMe:
-                        parser.set(str(index + 1), "rememberMe", "True")
+        if str(data) == "<Response [200]>":
+            data = json.loads(data.text)
+            data = data["data"]["ident"]
+            if getRememberMe:
+                parser.set(str(index + 1), "rememberMe", "True")
 
-                        with open('airlines.ini', 'w') as configfile:
-                            parser.write(configfile)
-                    return True
-                else:
-                    tk.messagebox.showerror(
-                        "xACARS Error", "Invalid API Key or API Key does not match username.")
-            elif str(data) == "<Response [401]>":
-                tk.messagebox.showerror(
-                    "xACARS Error", "Invalid API Key or API Key does not match username.")
-            else:
-                data1 = str(data)
-                if data1.startswith("<Response [") == True:
-                    data = str(data)
-                    data.split("[")
-                    data1 = data[11]
-                    data2 = data[12]
-                    data3 = data[13]
-                    data = data1 + data2 + data3
-                    tk.messagebox.showerror(
-                        "xACARS Error", "HTML Error: " + data)
-                else:
-                    tk.messagebox.showerror(
-                        "xACARS Error", "Error when logging in: " + str(data))
-            return False
+                with open('airlines.ini', 'w') as configfile:
+                    parser.write(configfile)
+            return True
+        elif str(data) == "<Response [401]>":
+            tk.messagebox.showerror("xACARS Error", "Invalid API Key")
         else:
-            tk.messagebox.showerror(
-                        "xACARS Error", "Credentials do not match account with " + getAirline)
-            return False
+            data1 = str(data)
+            if data1.startswith("<Response [") == True:
+                data = str(data)
+                data.split("[")
+                data1 = data[11]
+                data2 = data[12]
+                data3 = data[13]
+                data = data1 + data2 + data3
+                tk.messagebox.showerror("xACARS Error", "HTML Error: " + data)
+            else:
+                tk.messagebox.showerror("xACARS Error", "Error when logging in: " + str(data))
+        return False
     except Exception as e:
         tk.messagebox.showerror("xACARS Error", e)
         return False
