@@ -16,7 +16,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Version
-version = "v1.0.0-alpha3"
+version = "v1.0.0-beta1"
 
 # User Fields
 airline = ""

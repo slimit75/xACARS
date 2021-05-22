@@ -25,10 +25,8 @@ import web
 import track
 import posUpdateLoop
 
-'''
-Draw xACARS UI
-'''
 
+# Draw xACARS UI
 class App:
 
     def __init__(self, root):
@@ -122,9 +120,7 @@ class App:
                                   command=self.connectionTest)
         self.helpMenu.add_command(label='Wiki', command=web.openWiki)
 
-    """
-    Main Menu (Login)
-    """
+    # Main Menu (Login)
     def login(self):
         # Reload list of airlines
         config.reloadAirlines()
@@ -250,28 +246,22 @@ class App:
         # Button Grid
         self.style.configure("TButton", padding=20)
 
-        self.bidBtn = ttk.Button(self.dbHeader, text='Select Bid',
-                    command=self.setupFlight, state="enabled")
+        self.bidBtn = ttk.Button(self.dbHeader, text='Select Bid', command=self.setupFlight, state="enabled")
         self.bidBtn.grid(row=2, column=0, sticky='wens')
 
-        self.prefileBtn = ttk.Button(self.dbHeader, text='Pre-File',
-                       command=self.preFile, state="disabled")
+        self.prefileBtn = ttk.Button(self.dbHeader, text='Pre-File', command=self.preFile, state="disabled")
         self.prefileBtn.grid(row=3, column=0, sticky='wens')
 
-        self.startBtn = ttk.Button(self.dbHeader, text='Start Flight',
-                    command=self.startFlight, state="disabled")
+        self.startBtn = ttk.Button(self.dbHeader, text='Start Flight', command=self.startFlight, state="disabled")
         self.startBtn.grid(row=4, column=0, sticky='wens')
 
-        self.updateBtn = ttk.Button(self.dbHeader, text='Update Enroute Time',
-                    command=self.updateEnrouteTime, state="disabled")
+        self.updateBtn = ttk.Button(self.dbHeader, text='Update Enroute Time', command=self.updateEnrouteTime, state="disabled")
         self.updateBtn.grid(row=5, column=0, sticky='wens')
 
-        self.finishBtn = ttk.Button(self.dbHeader, text='Finish Flight',
-                    command=self.finishFlight, state="disabled")
+        self.finishBtn = ttk.Button(self.dbHeader, text='Finish Flight', command=self.finishFlight, state="disabled")
         self.finishBtn.grid(row=6, column=0, sticky='wens')
 
-        self.fileBtn = ttk.Button(self.dbHeader, text='File PIREP',
-                    command=self.filePirep, state="disabled")
+        self.fileBtn = ttk.Button(self.dbHeader, text='File PIREP', command=self.filePirep, state="disabled")
         self.fileBtn.grid(row=7, column=0, sticky='wens')
 
         self.log = tk.Listbox(self.root, height=6, width=107)
@@ -313,21 +303,15 @@ class App:
         self.header = tk.Label(self.aboutFrame, text="xACARS " + config.version,
                                font="Arial")
         self.header.grid(row=0, column=0)
-        self.bio = tk.Label(
-            self.aboutFrame, text="xACARS was developed by Speed_Limit75 - This version includes additional developments by Henry Shires.")
-        self.bio.grid(
-            row=1, column=0)
+        self.bio = tk.Label(self.aboutFrame, text="xACARS was originally developed by Speed_Limit75. This version features improvements developed by Henry Shires.")
+        self.bio.grid(row=1, column=0)
         self.space1 = ttk.Separator(self.aboutFrame, orient=tk.HORIZONTAL)
-        self.space1.grid(
-            row=2, column=0, sticky="we")
+        self.space1.grid(row=2, column=0, sticky="we")
 
-        self.text = tk.Label(
-            self.aboutFrame, text="This program is currently in alpha testing, so expect major bugs and issues.")
-        self.text.grid(
-            row=3, column=0, sticky="w")
+        self.text = tk.Label(self.aboutFrame, text="This program is currently in beta testing, so please file an issue if anything goes wrong.")
+        self.text.grid(row=3, column=0, sticky="w")
 
-        self.text2 = tk.Label(
-            self.aboutFrame, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.")
+        self.text2 = tk.Label(self.aboutFrame, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.")
         self.text2.grid(row=4, column=0, sticky="w")
 
         about.mainloop()
@@ -432,8 +416,7 @@ class App:
 
         # Get subfleet from flight information
         flightId = self.data["flight_id"]
-        flightData = json.loads(
-            web.get(config.website + '/api/flights/' + flightId))["data"]
+        flightData = json.loads(web.get(config.website + '/api/flights/' + flightId))["data"]
 
         self.acf = []
         self.acf2 = []
@@ -442,8 +425,7 @@ class App:
 
         for key in flightData["subfleets"]:
             for key2 in key["aircraft"]:
-                self.acf2.append(str(key2["registration"]) +
-                            " [" + str(key2["icao"]) + "]")
+                self.acf2.append(str(key2["registration"]) + " [" + str(key2["icao"]) + "]")
                 self.ids.append(key2["id"])
 
         for key in self.acf2:
@@ -452,31 +434,21 @@ class App:
 
         self.prefileFrame.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=self.dashboardViewPadY)
 
-        tk.Label(self.prefileFrame, text="Prefile", font="Arial").grid(
-            row=0, column=0, columnspan=3, sticky="w")
-        ttk.Separator(self.prefileFrame, orient=tk.HORIZONTAL).grid(
-            row=1, columnspan=4, sticky="we")
+        tk.Label(self.prefileFrame, text="Prefile", font="Arial").grid(row=0, column=0, columnspan=3, sticky="w")
+        ttk.Separator(self.prefileFrame, orient=tk.HORIZONTAL).grid(row=1, columnspan=4, sticky="we")
         tk.Label(self.prefileFrame, text="Aircraft: ").grid(row=2, column=0)
-        ttk.OptionMenu(self.prefileFrame, self.selacf, *
-                       self.acf).grid(row=2, column=1, sticky="we")
+        ttk.OptionMenu(self.prefileFrame, self.selacf, * self.acf).grid(row=2, column=1, sticky="we")
         tk.Label(self.prefileFrame, text="Cruise FL: ").grid(row=3, column=0)
-        ttk.Entry(self.prefileFrame, textvariable=self.cruiseAlt).grid(
-            row=3, column=1, sticky="we")
+        ttk.Entry(self.prefileFrame, textvariable=self.cruiseAlt).grid(row=3, column=1, sticky="we")
         tk.Label(self.prefileFrame, text="Planned Time: ").grid(row=4, column=0)
-        ttk.Entry(self.prefileFrame, textvariable=self.plannedFlightTime).grid(
-            row=4, column=1, sticky="we")
-        tk.Label(self.prefileFrame, text="minutes").grid(
-            row=4, column=2, sticky="w")
-        tk.Label(self.prefileFrame, text="Planned Distance: ").grid(
-            row=5, column=0)
-        ttk.Entry(self.prefileFrame, textvariable=self.plannedDistance).grid(
-            row=5, column=1, sticky="we")
+        ttk.Entry(self.prefileFrame, textvariable=self.plannedFlightTime).grid(row=4, column=1, sticky="we")
+        tk.Label(self.prefileFrame, text="minutes").grid(row=4, column=2, sticky="w")
+        tk.Label(self.prefileFrame, text="Planned Distance: ").grid(row=5, column=0)
+        ttk.Entry(self.prefileFrame, textvariable=self.plannedDistance).grid(row=5, column=1, sticky="we")
         tk.Label(self.prefileFrame, text="nm").grid(row=5, column=2, sticky="w")
         tk.Label(self.prefileFrame, text="Route:").grid(row=6, column=0)
-        ttk.Entry(self.prefileFrame, textvariable=self.route).grid(
-            row=6, column=1, sticky="we")
-        ttk.Button(self.prefileFrame, text='Pre-file', command=self.doPrefile).grid(
-            row=7, columnspan=4, sticky="we")
+        ttk.Entry(self.prefileFrame, textvariable=self.route).grid(row=6, column=1, sticky="we")
+        ttk.Button(self.prefileFrame, text='Pre-file', command=self.doPrefile).grid(row=7, columnspan=4, sticky="we")
 
     def startFlight(self):
         self.flightTime = int(time.time())
@@ -508,20 +480,16 @@ class App:
         uetFrame.grid_columnconfigure(0, weight=1)
         uetFrame.grid_columnconfigure(2, weight=1)
 
-        tk.Label(uetFrame, text='Edit Enroute Time', font="Arial").grid(
-            row=0, column=1)
-        ttk.Entry(uetFrame, textvariable=newEnrouteTime).grid(
-            row=1, column=1)
+        tk.Label(uetFrame, text='Edit Enroute Time', font="Arial").grid(row=0, column=1)
+        ttk.Entry(uetFrame, textvariable=newEnrouteTime).grid(row=1, column=1)
         tk.Label(uetFrame, text='minutes').grid(row=1, column=2, sticky="w")
-        ttk.Button(uetFrame, text='Save', command=uetWindow.quit).grid(
-            row=1, column=2, sticky="e")
+        ttk.Button(uetFrame, text='Save', command=uetWindow.quit).grid(row=1, column=2, sticky="e")
         
         uetWindow.mainloop()
 
         newEnrouteTime = newEnrouteTime.get()
         updatedTime = {"planned_flight_time": int(newEnrouteTime)}
-        updatedTime = web.post(config.website + '/api/pireps/' +
-                        self.pirepID + '/update', updatedTime)
+        updatedTime = web.post(config.website + '/api/pireps/' + self.pirepID + '/update', updatedTime)
 
         self.Log("Enroute Time Updated!")
 
@@ -545,28 +513,20 @@ class App:
         self.fileFrame.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=self.dashboardViewPadY)
 
         tk.Label(self.fileFrame, text='File Pirep', font="Arial").grid(sticky="w")
-        ttk.Separator(self.fileFrame, orient=tk.HORIZONTAL).grid(
-            row=1, column=1, sticky="we")
+        ttk.Separator(self.fileFrame, orient=tk.HORIZONTAL).grid(row=1, column=1, sticky="we")
 
         tk.Label(self.fileFrame, text='Fuel Used').grid(row=2, column=0, sticky="w")
-        ttk.Entry(self.fileFrame, textvariable=self.fuel).grid(
-            row=2, column=1, sticky="we")
+        ttk.Entry(self.fileFrame, textvariable=self.fuel).grid(row=2, column=1, sticky="we")
 
         tk.Label(self.fileFrame, text='Distance').grid(row=3, column=0, sticky="w")
-        ttk.Entry(self.fileFrame, textvariable=self.distance).grid(
-            row=3, column=1, sticky="we")
+        ttk.Entry(self.fileFrame, textvariable=self.distance).grid(row=3, column=1, sticky="we")
 
-        ttk.Checkbutton(self.fileFrame, text="Comment?",
-                        variable=self.addComment).grid(row=5, sticky="w")
-        ttk.Entry(self.fileFrame, textvariable=self.comment, width=50).grid(
-            row=5, column=1, sticky="nwwe")
+        ttk.Checkbutton(self.fileFrame, text="Comment?", variable=self.addComment).grid(row=5, sticky="w")
+        ttk.Entry(self.fileFrame, textvariable=self.comment, width=50).grid(row=5, column=1, sticky="nwwe")
 
-        ttk.Button(self.fileFrame, text='Submit PIREP', command=self.doFile).grid(
-            row=6, columnspan=2, sticky="we")
+        ttk.Button(self.fileFrame, text='Submit PIREP', command=self.doFile).grid(row=6, columnspan=2, sticky="we")
 
-    """
-    Run Login function
-    """
+    # Run Login function
     def doLogin(self):
         if (Login.login(self.airline, self.username, self.key, self.rememberMe)):
             self.website.set(config.website)
@@ -619,12 +579,10 @@ class App:
 
         self.login()
 
-    """
-    Check if the current version of xACARS is the latest, published version
-    """
+    # Check if the current version of xACARS is the latest, published version
     def doCheckForUpdates(self):
         if (not(web.isLatestVersion())):
-            tk.messagebox.showinfo("xACARS Update", "Update available! You can download the latest version of xACARS from https://github.com/slimit75/xACARS/releases")
+            tk.messagebox.showinfo("xACARS Update", "Update available! You can download the latest version of xACARS from https://github.com/3dash/xACARS/releases")
         else:
             tk.messagebox.showinfo("xACARS Update", "No updates available")
 
@@ -677,15 +635,10 @@ class App:
     def doFile(self):
         self.flightTime = int(time.time()) - self.flightTime
 
-        self.data = {
-            "flight_time": self.flightTime,
-            "fuel_used": self.fuel.get(), 
-            "distance": self.distance.get()
-            }
+        self.data = {"flight_time": self.flightTime, "fuel_used": self.fuel.get(), "distance": self.distance.get()}
         self.data = json.dumps(self.data)
 
-        response = web.post(config.website + '/api/pireps/' +
-                        self.pirepID + '/file', self.data)
+        response = web.post(config.website + '/api/pireps/' + self.pirepID + '/file', self.data)
 
         addComment = self.addComment.get()
 
@@ -694,8 +647,7 @@ class App:
         if addComment == 1:
             self.data = {"comment": str(self.comment.get()), }
             self.data = json.dumps(self.data)
-            commentsResponse = web.post(config.website + '/api/pireps/' +
-                            self.pirepID + '/comments', self.data)
+            commentsResponse = web.post(config.website + '/api/pireps/' + self.pirepID + '/comments', self.data)
 
         if response.status_code == 200:
             self.finishBtn.config(state="disabled")
