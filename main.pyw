@@ -264,7 +264,7 @@ class App:
         self.fileBtn = ttk.Button(self.dbHeader, text='File PIREP', command=self.filePirep, state="disabled")
         self.fileBtn.grid(row=7, column=0, sticky='wens')
 
-        self.log = tk.Listbox(self.root, height=6, width=107)
+        self.log = tk.Listbox(self.root, height=9, width=107)
         self.log.grid(row=0, column=1, sticky="s", padx=(0, 5))
 
         self.Log('View xACARS output here')
@@ -272,47 +272,43 @@ class App:
         self.dbBody.grid(row=self.dashboardViewRow, column=self.dashboardViewCol, sticky=self.dashboardViewSticky, pady=(5, 0))
         tk.Label(self.dbBody, text="Welcome to xACARS", font=self.h1, fg="#676767").grid(row=0, column=0)
         tk.Label(self.dbBody, text="xACARS has a new look!", font=self.h2).grid(row=1, column=0)
-        tk.Label(self.dbBody, text="New UI by Henry Shires", font=self.h3).grid(row=2, column=0, sticky="w", pady=(5, 0))
+        #tk.Label(self.dbBody, text="New UI by Henry Shires", font=self.h3).grid(row=2, column=0, sticky="w", pady=(5, 0))
 
-        link1 = tk.Label(self.dbBody, text="Join Our VA: https://estafetava.com", font=self.h3, fg="#676767")
-        link1.grid(row=2, column=0, pady=(10, 0), sticky="e")
-        link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://estafetava.com"))
+        #link1 = tk.Label(self.dbBody, text="Join Our VA: https://estafetava.com", font=self.h3, fg="#676767")
+        #link1.grid(row=2, column=0, pady=(10, 0), sticky="e")
+        #link1.bind("<Button-1>", lambda e: webbrowser.open_new("https://estafetava.com"))
 
-        ttk.Separator(self.dbBody, orient="horizontal").grid(row=3, column=0, sticky="ew", pady=(10, 0))
-        tk.Label(self.dbBody, text="Get Started - Track a flight:", font=self.h4, fg="#676767").grid(row=4, column=0, sticky="w", pady=(5, 0))
-        tk.Label(self.dbBody, text="1. Click \"Select Bid\" and view the list of bids", font=self.h4).grid(row=5, column=0, sticky="w", pady=(10, 0))
-        tk.Label(self.dbBody, text="    * Make sure to select a bid on your airline's website", font=self.h4).grid(row=6, column=0, sticky="w")
-        tk.Label(self.dbBody, text="2. Pre-file your flight", font=self.h4).grid(row=7, column=0, sticky="w")
-        tk.Label(self.dbBody, text="    * Input your aircraft, cruising altitude, estimated enroute time, distance, and route", font=self.h4).grid(row=8, column=0, sticky="w")
-        tk.Label(self.dbBody, text="3. Enter your sim, enabled FSUIPC, and click \"Start\". Update your enroute time as needed", font=self.h4).grid(row=9, column=0, sticky="w")
-        tk.Label(self.dbBody, text="4. After completion of your flight in sim, click \"Finish\"", font=self.h4).grid(row=10, column=0, sticky="w")
-        tk.Label(self.dbBody, text="5. File your flight and upload it to your airline!", font=self.h4).grid(row=11, column=0, sticky="w")
-        tk.Label(self.dbBody, text="    * Input your final enroute time, route, and fuel used, as well as any comments.", font=self.h4).grid(row=12, column=0, sticky="w")
+        ttk.Separator(self.dbBody, orient="horizontal").grid(row=2, column=0, sticky="ew", pady=(10, 0))
+        tk.Label(self.dbBody, text="Get Started - Track a flight:", font=self.h4, fg="#676767").grid(row=3, column=0, sticky="w", pady=(5, 0))
+        tk.Label(self.dbBody, text="1. Click \"Select Bid\" and view the list of bids", font=self.h4).grid(row=4, column=0, sticky="w", pady=(10, 0))
+        tk.Label(self.dbBody, text="    * Make sure to select a bid on your airline's website", font=self.h4).grid(row=5, column=0, sticky="w")
+        tk.Label(self.dbBody, text="2. Pre-file your flight", font=self.h4).grid(row=6, column=0, sticky="w")
+        tk.Label(self.dbBody, text="    * Input your aircraft, cruising altitude, estimated enroute time, distance, and route", font=self.h4).grid(row=7, column=0, sticky="w")
+        tk.Label(self.dbBody, text="3. Enter your sim, enabled FSUIPC, and click \"Start\". Update your enroute time as needed", font=self.h4).grid(row=8, column=0, sticky="w")
+        tk.Label(self.dbBody, text="4. After completion of your flight in sim, click \"Finish\"", font=self.h4).grid(row=9, column=0, sticky="w")
+        tk.Label(self.dbBody, text="5. File your flight and upload it to your airline!", font=self.h4).grid(row=10, column=0, sticky="w")
+        tk.Label(self.dbBody, text="    * Input your final enroute time, route, and fuel used, as well as any comments.", font=self.h4).grid(row=11, column=0, sticky="w")
 
         if config.checkUpdate == True:
             self.doCheckForUpdates()
 
     def about(self):
         about = tk.Toplevel()
-        about.title('xACARS - About')
+        about.title('About xACARS')
         about.iconbitmap('images/Favicon.ico')
 
         self.aboutFrame = tk.Frame(about)
         self.aboutFrame.grid(row=0, column=0)
 
-        self.header = tk.Label(self.aboutFrame, text="xACARS " + config.version,
-                               font="Arial")
+        self.header = tk.Label(self.aboutFrame, text="xACARS " + config.version, font="Arial")
         self.header.grid(row=0, column=0)
-        self.bio = tk.Label(self.aboutFrame, text="xACARS was originally developed by Speed_Limit75. This version features improvements developed by Henry Shires.")
+        self.bio = tk.Label(self.aboutFrame, text="xACARS was originally developed by Speed_Limit75.\nThis version features improvements by Henry Shires, you can check out his VA at: https://estafetava.com")
         self.bio.grid(row=1, column=0)
         self.space1 = ttk.Separator(self.aboutFrame, orient=tk.HORIZONTAL)
         self.space1.grid(row=2, column=0, sticky="we")
 
-        self.text = tk.Label(self.aboutFrame, text="This program is currently in beta testing, so please file an issue if anything goes wrong.")
+        self.text = tk.Label(self.aboutFrame, text="Found issues? Let us know! Just go to https://github.com/3dash/xACARS/issues")
         self.text.grid(row=3, column=0, sticky="w")
-
-        self.text2 = tk.Label(self.aboutFrame, text="xACARS is powered by FSUIPC/XPUIPC to gather data from the simulator.")
-        self.text2.grid(row=4, column=0, sticky="w")
 
         about.mainloop()
 
