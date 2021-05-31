@@ -7,3 +7,5 @@ dist/*
 
 airlines.ini
 run.bat
+main.spec
+build.bat
